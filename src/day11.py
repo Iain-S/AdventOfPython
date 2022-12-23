@@ -1,3 +1,7 @@
+from tqdm import tqdm
+from primefac import primefac
+
+
 class Monkey:
     def __init__(self, items, operation, test, if_true, if_false):
         self.troupe = []
@@ -17,12 +21,15 @@ class Monkey:
 
             item = self.items.pop(0)
             item = self.operation(item)
-            item //= 3
+            item = self._divide(item)
             send_to = self.if_true if self.test(item) else self.if_false
             self.troupe[send_to].receive(item)
 
     def receive(self, item):
         self.items.append(item)
+
+    def _divide(self, worry):
+        raise NotImplementedError
 
     def __eq__(self, other):
         return (
@@ -35,7 +42,23 @@ class Monkey:
         )
 
 
-def parse_monkey(text):
+class MonkeyOne(Monkey):
+    def _divide(self, worry):
+        return worry // 3
+
+
+class MonkeyTwo(Monkey):
+
+    def __init__(self):
+        super().__init__()
+        for i, item in enumerate(self.items):
+            self.items[i] = primefac(item)
+
+    def _divide(self, worry):
+        return worry
+
+
+def parse_monkey(text, monkey_class):
     num, items_line, op_line, test_line, true_line, false_line, *_ = text.split("\n")
 
     # e.g. Starting items: 79, 98
@@ -58,21 +81,23 @@ def parse_monkey(text):
     index = false_line.index("throw to monkey")
     if_false = int(false_line[index + 15 :])
 
-    zero = Monkey(items, op, test, if_true, if_false)
+    zero = monkey_class(items, op, test, if_true, if_false)
     return zero
 
 
-def one(text):
+def run_around(text, monkey_class, rounds):
     troupe = []
     for monkey_text in text.split("Monkey "):
 
         if monkey_text:
-            troupe.append(parse_monkey(monkey_text))
+            troupe.append(parse_monkey(monkey_text, monkey_class))
 
     for monkey in troupe:
         monkey.join_troupe(troupe)
 
-    for i in range(20):
+    for _ in tqdm(range(rounds)):
+        if _ > 100:
+            pass
         for monkey in troupe:
             monkey.take_turn()
 
@@ -80,12 +105,16 @@ def one(text):
     return most_inspected[0] * most_inspected[1]
 
 
-def two(lines):
-    pass
+def one(text):
+    return run_around(text, MonkeyOne, 20)
+
+
+def two(text):
+    return run_around(text, MonkeyTwo, 10_000)
 
 
 def main():
-    with open("../inputs/day11.txt") as f:
+    with open("../inputs/day11.txt", encoding="utf-8") as f:
         lines = f.read()
     print("one:", one(lines))
     print("two:", two(lines))

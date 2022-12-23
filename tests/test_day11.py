@@ -1,18 +1,18 @@
 import unittest
 from unittest.mock import MagicMock, call
 
-from src.day11 import Monkey, one, parse_monkey, two
+from src.day11 import MonkeyOne, one, parse_monkey, two
 
 NONE_FUNC = lambda x: None
 
 
 def null_monkey():
-    return Monkey([], NONE_FUNC, NONE_FUNC, 0, 0)
+    return MonkeyOne([], NONE_FUNC, NONE_FUNC, 0, 0)
 
 
 class TestOne(unittest.TestCase):
     def test_example(self):
-        with open("../examples/day11.txt") as f:
+        with open("../examples/day11.txt", encoding="utf-8") as f:
             content = f.read()
 
         expected = 10605
@@ -25,7 +25,7 @@ class TestOne(unittest.TestCase):
         mthree = MagicMock()
 
         troupe = []
-        mzero = Monkey([79, 98], lambda old: old * 19, lambda x: x % 19 == 0, 2, 3)
+        mzero = MonkeyOne([79, 98], lambda old: old * 19, lambda x: x % 19 == 0, 2, 3)
         mzero.join_troupe([mzero, mone, mtwo, mthree])
 
         mzero.take_turn()
@@ -49,17 +49,17 @@ class TestOne(unittest.TestCase):
             ]
         )
 
-        expected = Monkey([79, 98], lambda x: x * 19, lambda x: x % 23 == 0, 2, 3)
-        actual = parse_monkey(text)
+        expected = MonkeyOne([79, 98], lambda x: x * 19, lambda x: x % 23 == 0, 2, 3)
+        actual = parse_monkey(text, MonkeyOne)
         self.assertEqual(expected, actual)
 
 
 class TestTwo(unittest.TestCase):
     def test_example(self):
-        with open("../examples/day11.txt") as f:
-            content = [line.rstrip() for line in f]
+        with open("../examples/day11.txt", encoding="utf-8") as f:
+            content = f.read()
 
-        expected = -1
+        expected = 2713310158
         actual = two(content)
         self.assertEqual(expected, actual)
 

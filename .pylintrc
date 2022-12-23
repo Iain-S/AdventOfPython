@@ -88,7 +88,12 @@ disable=raw-checker-failed,
         use-symbolic-message-instead,
         too-few-public-methods,
         missing-module-docstring,
-        missing-class-docstring
+        missing-class-docstring,
+        eval-used,
+        too-many-arguments,
+        too-many-locals,
+        invalid-name,
+        unnecessary-lambda-assignment
 
 
 # Enable the message, report, category or checker with the given id(s). You can
