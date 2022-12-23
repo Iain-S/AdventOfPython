@@ -1,39 +1,67 @@
-import string
+def text_to_stacks(starting_text):
+    """Convert the header text to a list of lists."""
+    starting_lines = starting_text.split("\n")[::-1]
+
+    # The last col tells us how many empty stacks to initialise
+    stacks = [[] for _ in range(int(starting_lines[0][-2]))]
+
+    # The blocks are padded with whitespace so we get " " where there is no crate
+    for line in starting_lines[1:]:
+        for i, c in enumerate(line[1::4]):
+            if c != " ":
+                stacks[i].append(c)
+
+    return stacks
 
 
-def score_item(char):
-    # {"a":1 ... "Z":52}
-    return {letter: i + 1 for i, letter in enumerate(string.ascii_letters)}[char]
+def rearrange(lines, mover_function):
+    starting_state, moves = lines.split("\n\n")
 
+    stacks = text_to_stacks(starting_state)
 
-def score_rucksack(line):
-    return score_item(
-        set(line[len(line) // 2 :]).intersection(set(line[: len(line) // 2])).pop()
-    )
+    for move in moves.split("\n"):
+        if move:
+            words = move.split(" ")
+            how_many, from_stack_idx, to_stack_idx = (int(x) for x in words[1::2])
+            mover_function(
+                how_many, stacks[from_stack_idx - 1], stacks[to_stack_idx - 1]
+            )
+
+    return "".join([stack[-1] for stack in stacks])
 
 
 def one(lines):
-    return sum([score_rucksack(line) for line in lines])
+    def crate_mover(how_many, from_stack, to_stack):
 
+        if how_many == 0:
+            return
 
-def score_trio(elfx, elfy, elfz):
-    return score_item(set(elfx).intersection(set(elfy).intersection(set(elfz))).pop())
+        to_stack.append(from_stack.pop())
+        crate_mover(how_many - 1, from_stack, to_stack)
+
+    return rearrange(lines, crate_mover)
 
 
 def two(lines):
-    return sum(
-        [
-            score_trio(x, y, z)
-            for x, y, z in [lines[i : i + 3] for i in range(0, len(lines), 3)]
-        ]
-    )
+    def crate_mover_9001(how_many, from_stack, to_stack):
+
+        if how_many == 0:
+            return
+
+        temp = []
+        for _ in range(how_many):
+            temp.append(from_stack.pop())
+
+        to_stack.extend(temp[::-1])
+
+    return rearrange(lines, crate_mover_9001)
 
 
 def main():
-    with open("../AoC_2022/src/inputs/03.txt") as f:
-        lines = [line.rstrip() for line in f]
-        print("one:", one(lines))
-        print("two:", two(lines))
+    with open("../../AoC_2022/src/inputs/05.txt") as f:
+        lines = f.read()
+    print("one:", one(lines))
+    print("two:", two(lines))
 
 
 if __name__ == "__main__":

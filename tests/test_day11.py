@@ -7,7 +7,7 @@ NONE_FUNC = lambda x: None
 
 
 def null_monkey():
-    return MonkeyOne([], NONE_FUNC, NONE_FUNC, 0, 0)
+    return MonkeyOne([], NONE_FUNC, 1, 0, 0)
 
 
 class TestOne(unittest.TestCase):
@@ -24,8 +24,7 @@ class TestOne(unittest.TestCase):
         mtwo = MagicMock()
         mthree = MagicMock()
 
-        troupe = []
-        mzero = MonkeyOne([79, 98], lambda old: old * 19, lambda x: x % 19 == 0, 2, 3)
+        mzero = MonkeyOne([79, 98], lambda old: old * 19, 19, 2, 3)
         mzero.join_troupe([mzero, mone, mtwo, mthree])
 
         mzero.take_turn()
@@ -62,6 +61,9 @@ class TestTwo(unittest.TestCase):
         expected = 2713310158
         actual = two(content)
         self.assertEqual(expected, actual)
+
+    def test_theory(self):
+        pass
 
 
 if __name__ == "__main__":

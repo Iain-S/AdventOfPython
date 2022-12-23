@@ -1,3 +1,5 @@
+import numpy as np
+
 moves = {
     "R": complex(1, 0),
     "L": complex(-1, 0),
@@ -5,42 +7,61 @@ moves = {
     "D": complex(0, -1),
 }
 
+# all_locations = []
 
-def one(lines):
-    tail = complex(0, 0)
-    head = complex(0, 0)
-    visited = set()
+
+def rope(lines, num_segments):
+    segments = [complex(0, 0) for _ in range(num_segments)]
+    visited = {complex(0, 0)}
 
     for line in lines:
         direction, steps = line.split(" ")
         move = moves[direction]
 
         for _ in range(int(steps)):
-            head = head + move
-            to_head = head - tail
+            # locations = np.zeros((20, 20))
 
-            distance = abs(to_head)
-            if distance < 2:
-                # One step away
-                continue
+            segments[0] += move
+            prior_segment = segments[0]
 
-            elif distance == 2:
-                # Two steps vertically or horizontally
-                tail += to_head/2
+            # locations[int(segments[0].real), int(segments[0].imag)] = 0.5
 
-            else:
-                # Somewhat diagonal
-                real = to_head.real * (0.5 if abs(to_head.real) == 2 else 1)
-                imag = to_head.imag * (0.5 if abs(to_head.imag) == 2 else 1)
-                tail += complex(real, imag)
+            for i in range(1, num_segments):
 
-            visited.add(tail)
+                to_head = prior_segment - segments[i]
 
-    return len(visited) + 1
+                distance = abs(to_head)
+                if distance < 2:
+                    # One step away
+                    # continue
+                    pass
+
+                elif distance == 2:
+                    # Two steps vertically or horizontally
+                    segments[i] += to_head / 2
+
+                else:
+                    # Somewhat diagonal
+                    real = to_head.real * (0.5 if abs(to_head.real) == 2 else 1)
+                    imag = to_head.imag * (0.5 if abs(to_head.imag) == 2 else 1)
+                    segments[i] += complex(real, imag)
+
+                prior_segment = segments[i]
+                # if locations[int(segments[i].real),int(segments[i].imag)] < i:
+                #     locations[int(segments[i].real), int(segments[i].imag)] = i
+
+            visited.add(segments[i])
+            # all_locations.append(locations)
+
+    return len(visited)
+
+
+def one(lines):
+    return rope(lines, 2)
 
 
 def two(lines):
-    pass
+    return rope(lines, 10)
 
 
 def main():

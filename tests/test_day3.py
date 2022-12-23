@@ -3,12 +3,11 @@ from src.day3 import one, score_item, two
 
 
 class TestOne(unittest.TestCase):
-
     def test_score(self):
-        self.assertEqual(score_item('a'), 1)
-        self.assertEqual(score_item('z'), 26)
-        self.assertEqual(score_item('A'), 27)
-        self.assertEqual(score_item('Z'), 52)
+        self.assertEqual(score_item("a"), 1)
+        self.assertEqual(score_item("z"), 26)
+        self.assertEqual(score_item("A"), 27)
+        self.assertEqual(score_item("Z"), 52)
 
     def test_example(self):
         with open("../examples/day3.txt") as f:
@@ -29,5 +28,5 @@ class TestTwo(unittest.TestCase):
         self.assertEqual(expected, actual)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

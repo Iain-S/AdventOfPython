@@ -1,10 +1,10 @@
 import unittest
-from src.THE_DAY. import one, two
+from src.dayTHE_DAY import one, two
 
 
 class TestOne(unittest.TestCase):
     def test_example(self):
-        with open("../examples/dayTHE_DAY.txt") as f:
+        with open("../examples/dayTHE_DAY.txt", encoding="utf-8") as f:
             content = [line.rstrip() for line in f]
 
         expected = -1
@@ -14,7 +14,7 @@ class TestOne(unittest.TestCase):
 
 class TestTwo(unittest.TestCase):
     def test_example(self):
-        with open("../examples/dayTHE_DAY.txt") as f:
+        with open("../examples/dayTHE_DAY.txt", encoding="utf-8") as f:
             content = [line.rstrip() for line in f]
 
         expected = -1

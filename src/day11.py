@@ -1,18 +1,19 @@
 from tqdm import tqdm
-from primefac import primefac
 
 
 class Monkey:
-    def __init__(self, items, operation, test, if_true, if_false):
+    def __init__(self, items, operation, divisor, if_true, if_false):
+        self.items = items  # List of items
+        self.operation = operation  # Operation to apply each turn
+        self.divisor = divisor  # Test divisor
+        self.if_true = if_true  # Monkey to pass to if true
+        self.if_false = if_false  # Monkey to pass to if false
+
         self.troupe = []
-        self.items = items
-        self.operation = operation
-        self.test = test
-        self.if_true = if_true
-        self.if_false = if_false
         self.items_inspected = 0
 
     def join_troupe(self, troupe):
+        # Need to know other members to pass them items
         self.troupe = troupe
 
     def take_turn(self):
@@ -21,20 +22,22 @@ class Monkey:
 
             item = self.items.pop(0)
             item = self.operation(item)
-            item = self._divide(item)
-            send_to = self.if_true if self.test(item) else self.if_false
+            item = self.relax(item)
+            send_to = self.if_true if (item % self.divisor) == 0 else self.if_false
             self.troupe[send_to].receive(item)
 
     def receive(self, item):
         self.items.append(item)
 
-    def _divide(self, worry):
+    def relax(self, worry):
         raise NotImplementedError
 
     def __eq__(self, other):
+        # For testing only
         return (
             self.troupe == other.troupe
             and self.items == other.items
+            # Arbitrary test values
             and self.operation(10) == other.operation(10)
             and self.operation(110) == other.operation(110)
             and self.if_true == other.if_true
@@ -43,19 +46,23 @@ class Monkey:
 
 
 class MonkeyOne(Monkey):
-    def _divide(self, worry):
+    def relax(self, worry):
         return worry // 3
 
 
 class MonkeyTwo(Monkey):
+    wrap_at = None
 
-    def __init__(self):
-        super().__init__()
-        for i, item in enumerate(self.items):
-            self.items[i] = primefac(item)
+    def relax(self, worry):
 
-    def _divide(self, worry):
-        return worry
+        if not self.wrap_at:
+            self.wrap_at = 1
+            for m in self.troupe:
+                self.wrap_at *= m.divisor
+
+        # We have a fixed number of prime divisors that we care about
+        # so wrap around when we exceed the product of all of them
+        return worry % self.wrap_at
 
 
 def parse_monkey(text, monkey_class):
@@ -71,7 +78,6 @@ def parse_monkey(text, monkey_class):
     # e.g. Test: divisible by 23
     index = test_line.index("divisible by")
     divisor = int(test_line[index + 12 :])
-    test = lambda x: x % divisor == 0
 
     # e.g. If true: throw to monkey 2
     index = true_line.index("throw to monkey")
@@ -81,23 +87,19 @@ def parse_monkey(text, monkey_class):
     index = false_line.index("throw to monkey")
     if_false = int(false_line[index + 15 :])
 
-    zero = monkey_class(items, op, test, if_true, if_false)
+    zero = monkey_class(items, op, divisor, if_true, if_false)
     return zero
 
 
 def run_around(text, monkey_class, rounds):
     troupe = []
-    for monkey_text in text.split("Monkey "):
-
-        if monkey_text:
-            troupe.append(parse_monkey(monkey_text, monkey_class))
+    for monkey_text in text.split("Monkey ")[1:]:
+        troupe.append(parse_monkey(monkey_text, monkey_class))
 
     for monkey in troupe:
         monkey.join_troupe(troupe)
 
     for _ in tqdm(range(rounds)):
-        if _ > 100:
-            pass
         for monkey in troupe:
             monkey.take_turn()
 

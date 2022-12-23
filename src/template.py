@@ -7,7 +7,7 @@ def two(lines):
 
 
 def main():
-    with open("../inputs/dayTHE_DAY.txt") as f:
+    with open("../inputs/dayTHE_DAY.txt", encoding="utf-8") as f:
         lines = [line.rstrip() for line in f]
     print("one:", one(lines))
     print("two:", two(lines))

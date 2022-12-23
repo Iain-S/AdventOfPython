@@ -53,7 +53,6 @@ def one(lines):
                 or as_viewed_from_left[i][j]
                 or as_viewed_from_right[i][j]
             )
-            # grid[i][j] = visible
             count_visible += visible
 
     print(grid)
@@ -68,18 +67,18 @@ def two(lines):
         visited_trees = []
 
         def func(height):
-            visible = 0
+            count_visible = 0
 
             # Look back over our shoulder
             for tree in visited_trees[::-1]:
-                visible += 1
+                count_visible += 1
 
                 if tree >= height:
                     break
 
             visited_trees.append(height)
 
-            return visible
+            return count_visible
 
         return func
 
@@ -88,20 +87,16 @@ def two(lines):
     as_viewed_from_below = from_below(get_func, grid)
     as_viewed_from_above = from_above(get_func, grid)
 
-    # scores = [[0 for _ in range(len(grid[0]))] for _ in range(len(grid))]
-
     max_score = 0
     for i in range(len(grid)):
         for j in range(len(grid[0])):
             visible = (
-                    as_viewed_from_below[i][j]
-                    * as_viewed_from_above[i][j]
-                    * as_viewed_from_left[i][j]
-                    * as_viewed_from_right[i][j]
+                as_viewed_from_below[i][j]
+                * as_viewed_from_above[i][j]
+                * as_viewed_from_left[i][j]
+                * as_viewed_from_right[i][j]
             )
             max_score = max(visible, max_score)
-
-    # print(grid)
 
     return max_score
 

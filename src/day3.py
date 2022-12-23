@@ -30,7 +30,7 @@ def two(lines):
 
 
 def main():
-    with open("../AoC_2022/src/inputs/03.txt") as f:
+    with open("../AoC_2022/src/examples/03.txt") as f:
         lines = [line.rstrip() for line in f]
         print("one:", one(lines))
         print("two:", two(lines))
