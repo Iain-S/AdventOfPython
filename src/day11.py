@@ -85,8 +85,8 @@ def two(lines):
 
 
 def main():
-    with open("../inputs/day15.txt") as f:
-        lines = [line.rstrip() for line in f]
+    with open("../inputs/day11.txt") as f:
+        lines = f.read()
     print("one:", one(lines))
     print("two:", two(lines))
 

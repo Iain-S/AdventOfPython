@@ -1,25 +1,18 @@
 import unittest
 from unittest.mock import MagicMock, call
 
-from src.day15 import one, two, Monkey, parse_monkey
+from src.day11 import Monkey, one, parse_monkey, two
 
 NONE_FUNC = lambda x: None
 
 
 def null_monkey():
-    return Monkey(
-        [],
-        NONE_FUNC,
-        NONE_FUNC,
-        0,
-        0
-    )
+    return Monkey([], NONE_FUNC, NONE_FUNC, 0, 0)
 
 
 class TestOne(unittest.TestCase):
-
     def test_example(self):
-        with open("../examples/day15.txt") as f:
+        with open("../examples/day11.txt") as f:
             content = f.read()
 
         expected = 10605
@@ -32,13 +25,7 @@ class TestOne(unittest.TestCase):
         mthree = MagicMock()
 
         troupe = []
-        mzero = Monkey(
-            [79, 98],
-            lambda old: old * 19,
-            lambda x: x % 19 == 0,
-            2,
-            3
-        )
+        mzero = Monkey([79, 98], lambda old: old * 19, lambda x: x % 19 == 0, 2, 3)
         mzero.join_troupe([mzero, mone, mtwo, mthree])
 
         mzero.take_turn()
@@ -51,29 +38,25 @@ class TestOne(unittest.TestCase):
         self.assertListEqual([1000], zero.items)
 
     def test_parse_monkey(self):
-        text = "\n".join([
-            "0:",
-            "  Starting items: 79, 98",
-            "  Operation: new = old * 19",
-            "  Test: divisible by 23",
-            "    If true: throw to monkey 2",
-            "    If false: throw to monkey 3"
-        ])
-
-        expected = Monkey(
-            [79, 98],
-            lambda x: x * 19,
-            lambda x: x % 23 == 0,
-            2,
-            3
+        text = "\n".join(
+            [
+                "0:",
+                "  Starting items: 79, 98",
+                "  Operation: new = old * 19",
+                "  Test: divisible by 23",
+                "    If true: throw to monkey 2",
+                "    If false: throw to monkey 3",
+            ]
         )
+
+        expected = Monkey([79, 98], lambda x: x * 19, lambda x: x % 23 == 0, 2, 3)
         actual = parse_monkey(text)
         self.assertEqual(expected, actual)
 
 
 class TestTwo(unittest.TestCase):
     def test_example(self):
-        with open("../examples/day15.txt") as f:
+        with open("../examples/day11.txt") as f:
             content = [line.rstrip() for line in f]
 
         expected = -1
