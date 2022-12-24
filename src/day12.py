@@ -38,7 +38,29 @@ def get_lrud(nodes, x, y):
     return left, right, up, down
 
 
-def build_graph(lines):
+def get_lrud_two(nodes, x, y):
+    """Get the nodes that can be reached from x,y by travelling backwards."""
+    left, right, up, down = None, None, None, None
+
+    # Reverse our calcs as we can now go up any amount but only down one
+    threshold = HEIGHTS[nodes[y][x].letter] - 2
+
+    if x > 0 and HEIGHTS[nodes[y][x - 1].letter] > threshold:
+        left = nodes[y][x - 1]
+
+    if x + 1 < len(nodes[y]) and HEIGHTS[nodes[y][x + 1].letter] > threshold:
+        right = nodes[y][x + 1]
+
+    if y > 0 and HEIGHTS[nodes[y - 1][x].letter] > threshold:
+        up = nodes[y - 1][x]
+
+    if y + 1 < len(nodes) and HEIGHTS[nodes[y + 1][x].letter] > threshold:
+        down = nodes[y + 1][x]
+
+    return left, right, up, down
+
+
+def build_graph(lines, get_allowed_moves_with):
     nodes = []
 
     for line in lines:
@@ -51,12 +73,12 @@ def build_graph(lines):
 
     for y in range(len(nodes)):
         for x in range(len(nodes[y])):
-            nodes[y][x].lrud = get_lrud(nodes, x, y)
+            nodes[y][x].lrud = get_allowed_moves_with(nodes, x, y)
 
     return nodes
 
 
-def unweighted_shortest_path(nodes):
+def unweighted_shortest_path(nodes, start_on, end_on):
 
     # Is this a good way to break a nested loop?
     class BreakLoop(Exception):
@@ -65,7 +87,7 @@ def unweighted_shortest_path(nodes):
     try:
         for row in nodes:
             for node in row:
-                if node.letter == "S":
+                if node.letter == start_on:
                     start = node
                     raise BreakLoop
     except BreakLoop:
@@ -77,7 +99,7 @@ def unweighted_shortest_path(nodes):
 
         paths = bfs(paths)
         for path in paths:
-            if path[-1].letter == "E":
+            if path[-1].letter == end_on:
                 return path
 
 
@@ -107,13 +129,15 @@ def bfs(paths):
 
 
 def one(lines):
-    nodes = build_graph(lines)
-    shortest_path = unweighted_shortest_path(nodes)
+    nodes = build_graph(lines, get_lrud)
+    shortest_path = unweighted_shortest_path(nodes, "S", "E")
     return len(shortest_path) - 1
 
 
 def two(lines):
-    pass
+    nodes = build_graph(lines, get_lrud_two)
+    shortest_path = unweighted_shortest_path(nodes, "E", "a")
+    return len(shortest_path) - 1
 
 
 def main():

@@ -38,7 +38,7 @@ class TestOne(unittest.TestCase):
 
     def test_build_graph(self):
         content = ("SabcdefghijklmnopqrstuvwxyzE",)
-        actual = build_graph(content)
+        actual = build_graph(content, get_lrud)
 
         expected = [[Node(c, (None, None, None, None)) for c in content[0]]]
 
@@ -63,10 +63,10 @@ class TestOne(unittest.TestCase):
         end = Node("E", (start, None, None, None))
         start.lrud = None, end, None, None
 
-        path = unweighted_shortest_path([[start, end]])
+        path = unweighted_shortest_path([[start, end]], "S", "E")
         assert path == [start, end], path
 
-        path = unweighted_shortest_path([[end, start]])
+        path = unweighted_shortest_path([[end, start]], "S", "E")
         assert path == [start, end], path
 
     def test_bfs(self):
@@ -84,7 +84,7 @@ class TestTwo(unittest.TestCase):
         with open("../examples/day12.txt", encoding="utf-8") as f:
             content = [line.rstrip() for line in f]
 
-        expected = -1
+        expected = 29
         actual = two(content)
         self.assertEqual(expected, actual)
 
