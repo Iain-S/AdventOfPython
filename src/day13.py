@@ -3,7 +3,9 @@ from typing import List
 
 def split_text(text):
     """Convert text to a list of tuples of lists."""
-    return [(eval(a), eval(b)) for a, b in [line.split("\n") for line in text.split("\n\n")]]
+    return [
+        (eval(a), eval(b)) for a, b in [line.split("\n") for line in text.split("\n\n")]
+    ]
 
 
 def right_order(left: List, right: List):
