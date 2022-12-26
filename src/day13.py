@@ -45,11 +45,26 @@ def one(text):
     result = [right_order(x, y) for (x, y) in split_text(text)]
 
     # Sum the (one-indexed) indices of the True values
-    return sum(i+1 for i in range(len(result)) if result[i])
+    return sum(i + 1 for i in range(len(result)) if result[i])
 
 
-def two(lines):
-    pass
+def two(text):
+    list_of_pairs = split_text(text)
+    packets = (
+        [x[0] for x in list_of_pairs] + [x[1] for x in list_of_pairs] + [[[2]], [[6]]]
+    )
+
+    class MyList(list):
+        def __lt__(self, other):
+            return right_order(self, other)
+
+    for i in range(len(packets)):
+        packets[i] = MyList(packets[i])
+
+    packets.sort()
+
+    # Sum the (one-indexed) indices of the divider packets
+    return (packets.index([[2]]) + 1) * (packets.index([[6]]) + 1)
 
 
 def main():

@@ -27,9 +27,9 @@ class TestOne(unittest.TestCase):
 class TestTwo(unittest.TestCase):
     def test_example(self):
         with open("../examples/day13.txt", encoding="utf-8") as f:
-            content = [line.rstrip() for line in f]
+            content = f.read()
 
-        expected = -1
+        expected = 140
         actual = two(content)
         self.assertEqual(expected, actual)
 
