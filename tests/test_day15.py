@@ -28,11 +28,11 @@ class TestOne(unittest.TestCase):
 
     def test_slice_at(self):
         actual = slice_at(((8, 7), 9), 16)
-        expected = 8, 9
+        expected = [8, 9]
         self.assertEqual(expected, actual)
 
         actual = slice_at(((8, 7), 9), 7)
-        expected = -1, 18
+        expected = [-1, 18]
         self.assertEqual(expected, actual)
 
     def test_combine_ranges(self):
@@ -84,8 +84,8 @@ class TestTwo(unittest.TestCase):
         with open("../examples/day15.txt", encoding="utf-8") as f:
             content = [line.rstrip() for line in f]
 
-        expected = -1
-        actual = two(content)
+        expected = 56000011
+        actual = two(content, 20)
         self.assertEqual(expected, actual)
 
 

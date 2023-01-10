@@ -28,15 +28,12 @@ def slice_at(diamond, rownum):
     return [x - radius_at_y, x + radius_at_y + 1]
 
 
-def one(lines, rownum):
-    """Part 1."""
-    sensors_beacons = parse(lines)
-    diamonds = extract_diamonds(sensors_beacons)
-
+def get_ranges(diamonds, rownum):
+    """Get the non-overlapping ranges that the beacon cannot be in."""
     # Keep diamonds that have the right y vals
     keep = []
     for (x, y), width in diamonds:
-        if y + width >= rownum and y - width <= rownum:
+        if y + width >= rownum >= y - width:
             keep.append(((x, y), width))
 
     # Get the x co-ords of diamonds that intersect with our row
@@ -55,6 +52,20 @@ def one(lines, rownum):
         if not combine_ranges(ranges, x):
             ranges.insert(i, x)
             i += 1
+
+    return ranges
+
+
+def count_covered(ranges, sensors_beacons, rownum):
+    pass
+
+
+def one(lines, rownum):
+    """Part 1."""
+    sensors_beacons = parse(lines)
+    diamonds = extract_diamonds(sensors_beacons)
+
+    ranges = get_ranges(diamonds, rownum)
 
     # Get all beacons...
     beacons = set()
@@ -76,7 +87,6 @@ def one(lines, rownum):
 
 
 def combine_ranges(ranges, excluded):
-
     # Combine ranges to a minimum number
     for rang in ranges:
         # .....#####........
@@ -91,15 +101,65 @@ def combine_ranges(ranges, excluded):
     return False
 
 
-def two(lines):
-    pass
+def two(lines, xy_max):
+    """Part 2."""
+    sensors_beacons = parse(lines)
+    diamonds = extract_diamonds(sensors_beacons)
+
+    # Get all beacons...
+    beacons = set()
+    for sb in sensors_beacons:
+        beacons.add((sb[1][0], sb[1][1]))
+
+    all_ranges = []
+    for y in range(xy_max):
+        ranges = get_ranges(diamonds, y)
+
+        # We can drop any ranges that are outside 0-xy_max
+        for i in range(len(ranges)):
+
+            if ranges[i][0] < 0:
+                ranges[i][0] = 0
+
+            if ranges[i][1] < 0:
+                ranges.pop(i)
+                continue
+
+            if ranges[i][0] > xy_max:
+                ranges.pop(i)
+                continue
+
+            if ranges[i][1] > xy_max:
+                ranges[i][1] = xy_max
+
+            i += 1
+
+        all_ranges.append(ranges)
+
+    for y in range(xy_max):
+        ranges = all_ranges[y]
+
+        if len(ranges) > 1 or ranges[0][0] > 0 or ranges[-1][1] < xy_max:
+            break
+
+    ranges = all_ranges[y]
+    if len(ranges) == 2:
+        x = ranges[0][1]
+    elif ranges[0][0] == 1:
+        x = 0
+    elif ranges[-1][1] == xy_max - 1:
+        x = xy_max
+    else:
+        assert False, ranges
+
+    return (x * 4000000) + y
 
 
 def main():
     with open("../inputs/day15.txt", encoding="utf-8") as f:
         lines = [line.rstrip() for line in f]
     print("one:", one(lines, 2_000_000))
-    print("two:", two(lines))
+    print("two:", two(lines, 4_000_000))
 
 
 if __name__ == "__main__":
