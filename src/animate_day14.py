@@ -4,7 +4,9 @@ from time import sleep
 from day14 import build_cave, get_paths, CaveTwo
 
 import numpy as np
+
 np.set_printoptions(threshold=np.inf, linewidth=600)
+
 
 def animate(screen):
     with open("./examples/day14.txt", encoding="utf-8") as f:
@@ -24,11 +26,11 @@ def animate(screen):
             screen.print_at(line, 0, i + 2)
 
         ev = screen.get_key()
-        if ev in (ord('Q'), ord('q')):
+        if ev in (ord("Q"), ord("q")):
             return
 
         screen.refresh()
-        sleep(.5)
+        sleep(0.5)
 
 
 Screen.wrapper(animate)

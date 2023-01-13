@@ -15,7 +15,7 @@ import numpy as np
 
 
 class Cave:
-    def calc_mins_maxs(self,paths):
+    def calc_mins_maxs(self, paths):
         xmin = 10_000
         xmax = 1
         ymax = 0
@@ -51,17 +51,16 @@ class Cave:
 
         # Show the source of the sand with a 1
         self.sourcex = 500 - xmin
-        self.contents[0, self.sourcex] = 1
+        # self.contents[0, self.sourcex] = 1
 
         # Simulate a stream of sand rather than one grain at a time
         self.falling_sand = []  # the sand in motion
         self.static_sand = []  # the sand that has stopped
 
     def take_turn(self):
-        i = 0
-        while i < len(self.falling_sand):
+        while self.falling_sand:
             # Note these are in y,x not x,y
-            particle = self.falling_sand[i]
+            particle = self.falling_sand[0]
 
             # Set the old location of the sand particle back to air
             self.contents[particle[0], particle[1]] = 0
@@ -79,20 +78,19 @@ class Cave:
                 particle[1] += 1
             else:
                 # stops
-                self.static_sand.append(self.falling_sand.pop(i))
-                i -= 1
+                self.static_sand.append(self.falling_sand.pop(0))
 
             # Set the new location of the sand particle
             self.contents[particle[0], particle[1]] = 3
-            i += 1
 
         # Add a new grain
-        assert self.contents[1, self.sourcex] == 0
-        self.contents[1, self.sourcex] = 3
-        self.falling_sand.append([1, self.sourcex])
+        assert self.contents[0, self.sourcex] == 0
+        # self.contents[0, self.sourcex] = 3
+        self.falling_sand.append([0, self.sourcex])
+
 
 class CaveTwo(Cave):
-    def calc_mins_maxs(self,paths):
+    def calc_mins_maxs(self, paths):
         xmin = 10_000
         xmax = 1
         ymax = 0
@@ -104,15 +102,15 @@ class CaveTwo(Cave):
                 ymax = max(ymax, y)
 
         return xmin, xmax, 0, ymax
+
     def __init__(self, paths):
         xmin, xmax, ymin, ymax = super().calc_mins_maxs(paths)
 
         # We can, at most, form a triangle as wide as it is high from the start point
-        # paths.append([(0, ymax+2), (1_000, ymax+2)])
-        paths.append([(480, ymax+2), (520, ymax+2)])
+        paths.append([(0, ymax + 2), (1_000, ymax + 2)])
+        # paths.append([(480, ymax+2), (520, ymax+2)])
 
         super().__init__(paths)
-
 
 
 def get_paths(lines):
