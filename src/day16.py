@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Tuple, List
 
 import networkx as nx
 
@@ -21,7 +21,7 @@ def build_graph(lines):
 
 
 def remove_node(G, n):
-    # neighbours = list(G.neighbors(n))
+    """Remove a node from the graph and merge any edges from it."""
     edges = list(nx.edges(G, n))
 
     # for each pair of edges, add a new edge
@@ -52,6 +52,9 @@ def prune_graph(G):
 
 
 def max_pressure(start: str, nodes: Dict[str, int], distances: Dict[str, Dict[str, int]], mins):
+    """The max pressure that can be released from a bunch of nodes that are distances apart in mins time."""
+
+    # Out of curiosity, track the number of calls
     global calls
     calls += 1
 
@@ -86,16 +89,79 @@ def one(lines):
     """Calculate the pressure released."""
     G = build_graph(lines)
 
-    # Shortest paths between nodes with non-zero flow rates
-    nodes = {node: G.nodes[node]["flow"] for node in G.nodes if G.nodes[node]["flow"] > 0 or node == "AA"}
+    # Shortest paths between nodes
     distances = dict(nx.all_pairs_shortest_path_length(G))
+
+    # Nodes with non-zero flow rate (plus the starting node)
+    nodes = {node: G.nodes[node]["flow"] for node in G.nodes if G.nodes[node]["flow"] > 0 or node == "AA"}
 
     max_p, path = max_pressure("AA", nodes, distances, 30)
     print("path", path[::-1])
     return max_p
 
+
+def sublists(xs: List) -> List[List]:
+    """Generate all pairs of lists that can be made from one list.
+
+    See https://stackoverflow.com/a/29657078"""
+    l = len(xs)
+    for i in range(1 << l):
+        incl, excl = [], []
+        for j in range(l):
+            if i & (1 << j):
+                incl.append(xs[j])
+            else:
+                excl.append(xs[j])
+        yield (incl, excl)
+
+
+def get_max_pressure_two(distances):
+    """Get a function for part II."""
+    def max_pressure_two(nodes: Dict[str, int]):
+        """Find the best way to assign work to me and the elephant."""
+
+        # 2^n of these!
+        node_list = list(nodes.keys())
+        node_list.pop(node_list.index("AA"))
+
+        # Generate all of the ways we could divide up the nodes
+        # (each node only needs to be turned on once, by the elephant or me)
+        possible_splits = sublists(node_list)
+
+        best_pressure = 0
+        best_split = None
+        for split in possible_splits:
+
+            # e.g. the elephant might get ["AA", "BB", "II", "GG"] and I might get {"AA", "HH"],
+            p1, n1 = max_pressure("AA", {"AA": nodes["AA"],
+                                         **{key: value for key, value in nodes.items() if key in split[0]}}, distances,
+                                  26)
+            p2, n2 = max_pressure("AA", {"AA": nodes["AA"],
+                                         **{key: value for key, value in nodes.items() if key in split[1]}}, distances,
+                                  26)
+
+            if p1 + p2 > best_pressure:
+                best_pressure = p1 + p2
+                best_split = n1, n2
+
+        return best_pressure, best_split
+
+    return max_pressure_two
+
+
 def two(lines):
-    pass
+    """Calculate the pressure released by the elephant and you."""
+    G = build_graph(lines)
+
+    # Shortest paths between nodes
+    distances = dict(nx.all_pairs_shortest_path_length(G))
+
+    # Nodes with non-zero flow rates
+    nodes = {node: G.nodes[node]["flow"] for node in G.nodes if G.nodes[node]["flow"] > 0 or node == "AA"}
+
+    max_p, path = get_max_pressure_two(distances)(nodes)
+    print("path", path[::-1])
+    return max_p
 
 
 def main():

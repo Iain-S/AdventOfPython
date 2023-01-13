@@ -2,7 +2,7 @@ import unittest
 import networkx as nx
 from networkx.utils.misc import graphs_equal
 from matplotlib import pyplot as plt
-from src.day16 import one, two, build_graph, max_pressure_release_from, prune_graph, build_sp_table, max_pressure, calls
+from src.day16 import one, two, build_graph, prune_graph, max_pressure, calls
 from src import day16
 
 
@@ -63,35 +63,13 @@ class TestOne(unittest.TestCase):
         print("path", path[::-1])
         self.assertEqual(expected, actual)
 
-    def test_build_sp_table(self):
-        g1 = nx.Graph()
-        g1.add_node("AA", flow=0)
-        g1.add_node("BB", flow=1)
-        g1.add_node("CC", flow=0)
-        g1.add_node("DD", flow=1)
-        g1.add_weighted_edges_from([("AA", "BB", 1), ("BB", "CC", 1), ("CC", "DD", 1)])
-
-        expected = ()
-        actual = build_sp_table(g1)
-        self.assertListEqual(expected, actual)
-
-    def test_get_max_pressure_release_from(self):
-        G = nx.Graph()
-        G.add_node("AA", flow=1)
-        # G.add_node("BB", flow=2)
-        # G.add_edges_from([("AA", "BB")])
-        self.assertEqual(0, max_pressure_release_from(G, "AA", 0))
-        self.assertEqual(0, max_pressure_release_from(G, "AA", 1))
-        self.assertEqual(1, max_pressure_release_from(G, "AA", 2))
-        self.assertEqual(9, max_pressure_release_from(G, "AA", 10))
-
 
 class TestTwo(unittest.TestCase):
     def test_example(self):
         with open("../examples/day16.txt", encoding="utf-8") as f:
             content = [line.rstrip() for line in f]
 
-        expected = -1
+        expected = 1707
         actual = two(content)
         self.assertEqual(expected, actual)
 
