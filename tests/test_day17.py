@@ -1,6 +1,7 @@
 import unittest
 
-from src.day17 import one, two, combine, repeat, RockFour, RockOne, RockThree, RockTwo, calc_highest_y
+from src.day17 import one, two, combine, repeat, RockFour, RockOne, RockThree, RockTwo, calc_highest_y, optimise, \
+    find_cycle
 
 
 class TestOne(unittest.TestCase):
@@ -12,6 +13,90 @@ class TestOne(unittest.TestCase):
         expected = 3068
         actual = one(content)
         self.assertEqual(expected, actual)
+
+    def test_optimise(self):
+        # Can't optimise the start point any further
+        highpoints = [[1] for _ in range(7)]
+        expected = 0
+        actual = optimise(highpoints)
+        self.assertEqual(expected, actual)
+        self.assertListEqual([[1] for _ in range(7)], highpoints)
+
+        highpoints = [[1, 1] for _ in range(7)]
+        expected = 1
+        actual = optimise(highpoints)
+        self.assertEqual(expected, actual)
+        self.assertListEqual([[1] for _ in range(7)], highpoints)
+
+        highpoints = [
+            [1, 1, 1, 1],
+            [1, 1, 1, 0],
+            [1, 1, 0, 0],
+            [1, 0, 0, 1],
+            [1, 0, 0, 1],
+            [1, 1, 1, 1],
+            [1, 1, 1, 1],
+        ]
+        copy = [
+            [1, 1, 1, 1],
+            [1, 1, 1, 0],
+            [1, 1, 0, 0],
+            [1, 0, 0, 1],
+            [1, 0, 0, 1],
+            [1, 1, 1, 1],
+            [1, 1, 1, 1],
+        ]
+        expected = 0
+        actual = optimise(highpoints)
+        self.assertEqual(expected, actual)
+        self.assertListEqual(copy, highpoints)
+
+        highpoints = [
+            [1, 1, 1, 1],
+            [1, 1, 0, 1],
+            [1, 1, 0, 0],
+            [1, 1, 0, 0],
+            [1, 1, 0, 1],
+            [1, 1, 1, 1],
+            [1, 1, 1, 1],
+        ]
+        copy = [
+            [1, 1, 1],
+            [1, 0, 1],
+            [1, 0, 0],
+            [1, 0, 0],
+            [1, 0, 1],
+            [1, 1, 1],
+            [1, 1, 1],
+        ]
+        expected = 1
+        actual = optimise(highpoints)
+        self.assertEqual(expected, actual)
+        self.assertListEqual(copy, highpoints)
+
+        print("!!")
+        highpoints = [
+            [1, 1, 1, 1],
+            [1, 0, 0, 1],
+            [1, 0, 0, 1],
+            [1, 0, 0, 1],
+            [1, 0, 0, 1],
+            [1, 1, 1, 1],
+            [1, 0, 0, 0],
+        ]
+        copy = [
+            [1, 1, 1, 1],
+            [1, 0, 0, 1],
+            [1, 0, 0, 1],
+            [1, 0, 0, 1],
+            [1, 0, 0, 1],
+            [1, 1, 1, 1],
+            [1, 0, 0, 0],
+        ]
+        expected = 0
+        actual = optimise(highpoints)
+        self.assertEqual(expected, actual)
+        self.assertListEqual(copy, highpoints)
 
     def test_repeat(self):
         with open("../examples/day17.txt", encoding="utf-8") as f:
@@ -229,9 +314,17 @@ class TestTwo(unittest.TestCase):
         with open("../examples/day17.txt", encoding="utf-8") as f:
             content = [line.rstrip() for line in f]
 
-        expected = -1
+        expected = 1514285714288
         actual = two(content)
         self.assertEqual(expected, actual)
+
+    def test_find_cycle(self):
+        with open("../inputs/day17.txt", encoding="utf-8") as f:
+            content = [line.rstrip() for line in f]
+
+        expected = 101, 1816
+        actual = find_cycle(content[0])
+        self.assertTupleEqual(expected, actual)
 
 
 if __name__ == "__main__":
