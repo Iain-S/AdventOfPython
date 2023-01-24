@@ -116,7 +116,6 @@ def calc_most_geodes(blueprint, minutes, ore, clay, obs, ore_r, clay_r, obs_r):
         if ore_r and obs_r:
             x = True
 
-    # if len(geodes) < len(blueprint.keys()):
     if x:
         # counter += 1
         # We couldn't afford at least one kind of robot
@@ -129,24 +128,33 @@ def calc_most_geodes(blueprint, minutes, ore, clay, obs, ore_r, clay_r, obs_r):
     return max(geodes)
 
 
-def run_one(blueprint):
-    return calc_most_geodes(blueprint, 24, 0, 0, 0, 1, 0, 0)
-    # return calc_most_geodes(blueprint, 18, 0, 0, 0, 1, 0, 0)
+def run_one(blueprint, mins=14):
+    # print(blueprint, mins)
+    return calc_most_geodes(blueprint, mins, 0, 0, 0, 1, 0, 0)
 
 
 def one(lines):
     blueprints = [get_blueprint(line) for line in lines]
     with Pool() as pool:
         most_geodes = pool.map(run_one, blueprints)
-    # most_geodes = map(run_one, blueprints)
     quality_levels = [(i + 1) * q for i, q in enumerate(most_geodes)]
     # print(f"{counter=}")
     return sum(quality_levels)
 
 
-def two(lines):
-    pass
+def run_two(lines, num):
+    blueprints = [get_blueprint(line) for line in lines[0:num]]
+    with Pool() as pool:
+        most_geodes = pool.starmap(run_one, zip(blueprints, [32] * len(blueprints)))
 
+    def mult(a, b):
+        return a * b
+
+    return functools.reduce(mult, most_geodes, 1)
+
+
+def two(lines):
+    return run_two(lines, 3)
 
 def main():
     with open("../inputs/day19.txt", encoding="utf-8") as f:
