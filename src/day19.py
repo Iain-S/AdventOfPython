@@ -25,110 +25,109 @@ def get_blueprint(line):
     )
 
 
-@functools.cache
 def calc_most_geodes(blueprint, minutes, ore, clay, obs, ore_r, clay_r, obs_r):
-    # global counter
-    minutes -= 1
+    @functools.cache
+    def inner(minutes, ore, clay, obs, ore_r, clay_r, obs_r):
 
-    if minutes == 0:
-        return 0
+        # global counter
+        minutes -= 1
 
-    new_ore = ore + ore_r
-    new_clay = clay + clay_r
-    new_obs = obs + obs_r
-    geodes = []
+        if minutes == 0:
+            return 0
 
-    x = False
-    # Build an ore robot
-    (ore_cost,) = blueprint["ore_cost"]
-    if ore_cost <= ore:
-        geodes.append(
-            calc_most_geodes(
-                blueprint,
-                minutes,
-                new_ore - ore_cost,
-                new_clay,
-                new_obs,
-                ore_r + 1,
-                clay_r,
-                obs_r,
+        new_ore = ore + ore_r
+        new_clay = clay + clay_r
+        new_obs = obs + obs_r
+        geodes = []
+
+        x = False
+        # Build an ore robot
+        (ore_cost,) = blueprint["ore_cost"]
+        if ore_cost <= ore:
+            geodes.append(
+                inner(
+                    minutes,
+                    new_ore - ore_cost,
+                    new_clay,
+                    new_obs,
+                    ore_r + 1,
+                    clay_r,
+                    obs_r,
+                )
             )
-        )
-    else:
-        if ore_r:
-            x = True
+        else:
+            if ore_r:
+                x = True
 
-    # Build a clay robot
-    (ore_cost,) = blueprint["clay_cost"]
-    if ore_cost <= ore:
-        geodes.append(
-            calc_most_geodes(
-                blueprint,
-                minutes,
-                new_ore - ore_cost,
-                new_clay,
-                new_obs,
-                ore_r,
-                clay_r + 1,
-                obs_r,
+        # Build a clay robot
+        (ore_cost,) = blueprint["clay_cost"]
+        if ore_cost <= ore:
+            geodes.append(
+                inner(
+                    minutes,
+                    new_ore - ore_cost,
+                    new_clay,
+                    new_obs,
+                    ore_r,
+                    clay_r + 1,
+                    obs_r,
+                )
             )
-        )
-    else:
-        if ore_r:
-            x = True
+        else:
+            if ore_r:
+                x = True
 
-    # Build an obsidian robot
-    ore_cost, clay_cost = blueprint["obsidian_cost"]
-    if ore_cost <= ore and clay_cost <= clay:
-        geodes.append(
-            calc_most_geodes(
-                blueprint,
-                minutes,
-                new_ore - ore_cost,
-                new_clay - clay_cost,
-                new_obs,
-                ore_r,
-                clay_r,
-                obs_r + 1,
+        # Build an obsidian robot
+        ore_cost, clay_cost = blueprint["obsidian_cost"]
+        if ore_cost <= ore and clay_cost <= clay:
+            geodes.append(
+                inner(
+                    minutes,
+                    new_ore - ore_cost,
+                    new_clay - clay_cost,
+                    new_obs,
+                    ore_r,
+                    clay_r,
+                    obs_r + 1,
+                )
             )
-        )
-    else:
-        if ore_r and clay_r:
-            x = True
+        else:
+            if ore_r and clay_r:
+                x = True
 
-    # Build a geode robot
-    ore_cost, obs_cost = blueprint["geode_cost"]
-    if ore_cost <= ore and obs_cost <= obs:
-        geodes.append(
-            minutes
-            + calc_most_geodes(
-                blueprint,
-                minutes,
-                new_ore - ore_cost,
-                new_clay,
-                new_obs - obs_cost,
-                ore_r,
-                clay_r,
-                obs_r,
+        # Build a geode robot
+        ore_cost, obs_cost = blueprint["geode_cost"]
+        if ore_cost <= ore and obs_cost <= obs:
+            geodes.append(
+                minutes
+                + inner(
+                    minutes,
+                    new_ore - ore_cost,
+                    new_clay,
+                    new_obs - obs_cost,
+                    ore_r,
+                    clay_r,
+                    obs_r,
+                )
             )
-        )
-    else:
-        if ore_r and obs_r:
-            x = True
+        else:
+            if ore_r and obs_r:
+                x = True
 
-    if x:
-        # counter += 1
-        # We couldn't afford at least one kind of robot
-        geodes.append(
-            calc_most_geodes(
-                blueprint, minutes, new_ore, new_clay, new_obs, ore_r, clay_r, obs_r
+        if x:
+            # counter += 1
+            # We couldn't afford at least one kind of robot
+            geodes.append(
+                inner(
+                    minutes, new_ore, new_clay, new_obs, ore_r, clay_r, obs_r
+                )
             )
-        )
 
-    return max(geodes)
+        return max(geodes)
+    return inner(minutes, ore, clay, obs, ore_r, clay_r, obs_r)
 
 
-def run_one(blueprint, mins=14):
+def run_one(blueprint, mins=20):
     # print(blueprint, mins)
     return calc_most_geodes(blueprint, mins, 0, 0, 0, 1, 0, 0)
 
@@ -154,6 +153,7 @@ def run_two(lines, num):
 
 
 def two(lines):
+    return
     return run_two(lines, 3)
 
 def main():
