@@ -46,13 +46,12 @@ class TestOne(unittest.TestCase):
         self.assertEqual(3, calc_coords([1, 2, -3, 4, 0, 3, -2]))
 
 
-
 class TestTwo(unittest.TestCase):
     def test_example(self):
         with open("../examples/day20.txt", encoding="utf-8") as f:
             content = [line.rstrip() for line in f]
 
-        expected = -1
+        expected = 1623178306
         actual = two(content)
         self.assertEqual(expected, actual)
 
