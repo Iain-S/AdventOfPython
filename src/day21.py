@@ -19,11 +19,60 @@ def get_func(monkeys):
 
 def one(lines):
     monkeys = {k: v for k, v in [line.split(": ") for line in lines]}
+
+    # Traverse the tree, calculating only as necessary
     return get_func(monkeys)("root")
 
 
 def two(lines):
-    pass
+
+    monkeys = {k: v for k, v in [line.split(": ") for line in lines]}
+
+    # humn only seems to influence one branch of the tree
+    left, _, right = monkeys["root"].split(" ")
+    monkeys["humn"] = None
+
+    branch_has_humn = right
+
+    f = get_func(monkeys)
+    try:
+        value = f(left)
+    except TypeError:
+        branch_has_humn = left
+        value = f(right)
+
+    def make_branch_equal(x, branch):
+        """branch is the name of a monkey, x is a target value"""
+        if monkeys[branch] is None:
+            return x
+
+        l, op, r = monkeys[branch].split(" ")
+
+        humn_branch = r
+        try:
+            val = f(l)
+        except TypeError:
+            humn_branch = l
+            val = f(r)
+
+        if op == "+":
+            return make_branch_equal(x - val, humn_branch)
+        elif op == "*":
+            return make_branch_equal(x / val, humn_branch)
+        elif op == "-":
+            if humn_branch == l:
+                return make_branch_equal(x + val, humn_branch)
+            else:
+                return make_branch_equal(-1 * (x - val), humn_branch)
+        elif op == "/":
+            if humn_branch == l:
+                return make_branch_equal(x * val, humn_branch)
+            else:
+                return make_branch_equal(val / x, humn_branch)
+        else:
+            assert False
+
+    return make_branch_equal(value, branch_has_humn)
 
 
 def main():
