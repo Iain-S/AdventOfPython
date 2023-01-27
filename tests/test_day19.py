@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 
-from src.day19 import one, two, get_blueprint, run_one, HashableDict
+from src.day19 import one, two, get_blueprint, run_one
 
 with open("../examples/day19.txt", encoding="utf-8") as f:
     content = [line.rstrip() for line in f]
