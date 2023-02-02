@@ -45,8 +45,9 @@ FACING_VALUES = {
     "U": 3,
 }
 
-NOT_EMTPY = (".", "#", ">", "<", "^", "v")
+NOT_EMPTY = (".", "#", ">", "<", "^", "v")
 
+DIM = 50
 
 def one(content):
     a, b = content.split("\n\n")
@@ -80,7 +81,7 @@ def simulate(board_map, instructions):
                     if direction == "R":
                         if pos[1] + 1 >= len(row):
                             # wrap around
-                            x = min([row.index(z) for z in NOT_EMTPY if z in row])
+                            x = min([row.index(z) for z in NOT_EMPTY if z in row])
                         else:
                             x = pos[1] + 1
 
@@ -181,10 +182,49 @@ def simulate(board_map, instructions):
 
     return pos, direction
 
+def make_seams():
+    pass
+
+def myrange(pointa,pointb):
+    # inclusive ranges in either direction
+    if pointa[0] == pointb[0]:
+        # horizontal
+        x = pointa[1]
+        y = pointb[1]
+        a = pointa[0]
+
+        return [(a, j) for j in (range(x, y + 1) if y > x else range(x, y-1, -1))]
+    else:
+        # vertical
+        x = pointa[0]
+        y = pointb[0]
+        a = pointa[1]
+        return [(j, a) for j in (range(x, y + 1) if y > x else range(x, y-1, -1))]
+
+def make_seam(first, second):
+    inverse = {
+        "U": "D",
+        "D": "U",
+        "L": "R",
+        "R": "L",
+    }
+    j = myrange(first[0], first[1])
+    k = myrange(second[0], second[1])
+    assert len(j) == len(k), f"{j}, {k}"
+
+    result = {}
+    for i in range(len(j)):
+        result[(j[i], first[2])] = (k[i], second[2])
+
+    for i in range(len(j)):
+        result[(k[i], inverse[second[2]])] = (j[i], inverse[first[2]])
+
+    return result
 
 def new_direction_pos(direction, pos):
     # change direction and y,x position
     if testing:
+        seams = {}
         if direction == "R":
             if 0 <= pos[0] <= 3:
                 direction = "L"
@@ -278,6 +318,60 @@ def new_direction_pos(direction, pos):
         else:
             # Up
             pass
+
+    return direction, pos
+
+def walk_edge(board_map, direction, pos):
+    pass
+
+def is_edge(board_map, pos):
+    if pos[0] == 0 or pos[0] == len(board_map) - 1:
+        return True
+    elif pos[1] == 0 or pos[1] == len(board_map[pos[0]]) - 1:
+        return True
+    else:
+        if " " in (board_map[pos[0]-1][pos[1]], board_map[pos[0]+1][pos[1]], board_map[pos[0]][pos[1]-1], board_map[pos[0]][pos[1]+1]):
+            return True
+        else:
+            return False
+
+def new_direction_pos_two(board_map, direction, pos):
+    # change direction and y,x position
+
+    r_direction = ROTATIONS[direction+"R"]
+    r_pos = pos
+    rotation = 90
+
+    for _ in range(DIM):
+        if r_direction == "L":
+            if r_pos[1]-1 >= 0 and board_map[r_pos[0]][r_pos[1]-1] in NOT_EMPTY:
+                # move forward
+                r_pos = r_pos[0], r_pos[1] - 1
+
+                if not is_edge(board_map, r_pos):
+                    # must be at an inner corner
+                    if False:
+                        pass
+
+
+
+            # elif new_l_pos[1] < 0 or board_map[new_l_pos[0]][new_l_pos[1]] == " ":
+            else:
+
+                # turn right
+                pass
+
+
+        elif r_direction == "R":
+            pass
+
+        elif r_direction == "U":
+            pass
+
+        else:
+            # Down
+            pass
+
 
     return direction, pos
 
@@ -434,6 +528,9 @@ class Cube:
                  back_face,
                  top_face,
                  bottom_face):
+        pass
+
+    def walk(self, instructions):
         pass
 
 
