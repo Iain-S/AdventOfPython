@@ -136,7 +136,7 @@ def simulate(grove):
         for y in range(len(grove)):
             for x in range(len(grove[0])):
                 if grove[y][x] == "#":
-                    by_self = False
+                    by_self = True
                     for i in range(4):
                         dir = dirs[(dirs_i + i) % len(dirs)]
                         x_new = x + dir[1]
