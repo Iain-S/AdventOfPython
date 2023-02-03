@@ -30,6 +30,9 @@ def display_elves(elves: List[Elf]) -> List[str]:
 
     return ["".join(x) for x in array]
 
+def display_grove(grove):
+    for row in grove:
+        print("".join(row))
 
 def double_grove(grove: List[List[str]]):
     half_y = len(grove) // 2
@@ -99,8 +102,10 @@ def simulate(grove):
                             or grove[right[0]][right[1]] == "#"
                         ):
                             by_self = False
+                            break
+
                     if by_self:
-                        break
+                        continue
 
                     for i in range(4):
                         dir = dirs[(dirs_i + i) % len(dirs)]
@@ -131,22 +136,47 @@ def simulate(grove):
         for y in range(len(grove)):
             for x in range(len(grove[0])):
                 if grove[y][x] == "#":
+                    by_self = False
+                    for i in range(4):
+                        dir = dirs[(dirs_i + i) % len(dirs)]
+                        x_new = x + dir[1]
+                        y_new = y + dir[0]
+
+                        left = (y_new - 1, x_new) if dir[0] == 0 else (y_new, x_new - 1)
+                        right = (
+                            (y_new + 1, x_new) if dir[0] == 0 else (y_new, x_new + 1)
+                        )
+                        if (
+                                grove[y_new][x_new] == "#"
+                                or grove[left[0]][left[1]] == "#"
+                                or grove[right[0]][right[1]] == "#"
+                        ):
+                            by_self = False
+                            break
+
+                    if by_self:
+                        continue
+
                     for i in range(4):
                         dir = dirs[(dirs_i + i) % len(dirs)]
                         x_new = x + dir[1]
                         y_new = y + dir[0]
                         if grove[y_new][x_new] == "1":
-                            grove[y_new][x_new] = "#"
+                            # So that we skip this elf in subsequent loops
+                            grove[y_new][x_new] = "!"
                             grove[y][x] = "."
                             break
 
         for y in range(len(grove)):
             for x in range(len(grove[0])):
-                try:
-                    int(grove[y][x])
-                    grove[y][x] = "."
-                except ValueError:
-                    pass
+                if grove[y][x] == "!":
+                    grove[y][x] = "#"
+                else:
+                    try:
+                        int(grove[y][x])
+                        grove[y][x] = "."
+                    except ValueError:
+                        pass
 
         dirs_i += 1
 
