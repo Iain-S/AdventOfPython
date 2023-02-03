@@ -1,5 +1,5 @@
 import unittest
-from src.day23 import one, two, Elf, display_elves, double_grove, calc_score
+from src.day23 import one, double_grove, calc_score, DoneException
 
 
 class TestOne(unittest.TestCase):
@@ -60,8 +60,13 @@ class TestTwo(unittest.TestCase):
         with open("../examples/day23.txt", encoding="utf-8") as f:
             content = [line.rstrip() for line in f]
 
-        expected = -1
-        actual = two(content)
+        expected = 20
+
+        try:
+            one(content)
+        except DoneException as e:
+            actual = e.loops
+
         self.assertEqual(expected, actual)
 
 
