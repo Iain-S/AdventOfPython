@@ -1,5 +1,5 @@
 import unittest
-from src.day23 import one, double_grove, calc_score, DoneException
+from src.day23 import one, double_grove, calc_score, DoneException, two
 
 
 class TestOne(unittest.TestCase):
@@ -9,6 +9,7 @@ class TestOne(unittest.TestCase):
 
         expected = 110
         actual = one(content)
+
         self.assertEqual(expected, actual)
 
     def test_double_grove(self):
@@ -34,26 +35,6 @@ class TestOne(unittest.TestCase):
         actual = calc_score(grove)
         self.assertEqual(expected, actual)
 
-    def test_simulate(self):
-        with open("../examples/day23.txt", encoding="utf-8") as f:
-            content = [line.rstrip() for line in f]
-
-        one(content)
-
-    def test_display_elves(self):
-        elf = Elf(0, 0)
-        expected = ["#"]
-        actual = display_elves([elf])
-        self.assertListEqual(expected, actual)
-
-        expected = ["##"]
-        actual = display_elves([Elf(-1, 1), Elf(-1, 0)])
-        self.assertListEqual(expected, actual)
-
-        expected = ["#", "#"]
-        actual = display_elves([Elf(-1, 1), Elf(0, 1)])
-        self.assertListEqual(expected, actual)
-
 
 class TestTwo(unittest.TestCase):
     def test_example(self):
@@ -61,12 +42,7 @@ class TestTwo(unittest.TestCase):
             content = [line.rstrip() for line in f]
 
         expected = 20
-
-        try:
-            one(content)
-        except DoneException as e:
-            actual = e.loops
-
+        actual = two(content)
         self.assertEqual(expected, actual)
 
 

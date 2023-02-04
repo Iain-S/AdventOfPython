@@ -1,6 +1,9 @@
 from itertools import chain
 
+# Some hard coded differences depending on whether we're
+# using the example or real input
 testing = False
+
 
 def split_on(a_string, char):
     b = a_string.split(char)
@@ -49,6 +52,7 @@ NOT_EMPTY = (".", "#", ">", "<", "^", "v")
 
 DIM = 50
 
+
 def one(content):
     a, b = content.split("\n\n")
     board_map = [list(line) for line in a.split("\n")]
@@ -67,11 +71,13 @@ def one(content):
 def simulate(board_map, instructions):
     pos = 0, board_map[0].index(".")  # y, x from top left
     direction = "R"
+    assert board_map[pos[0]][pos[1]] != "#"
     board_map[pos[0]][pos[1]] = ARROWS[direction]
 
     for i_inst, instruction in enumerate(instructions):
         if isinstance(instruction, str):
             direction = ROTATIONS[direction + instruction]
+            assert board_map[pos[0]][pos[1]] != "#"
             board_map[pos[0]][pos[1]] = ARROWS[direction]
         else:
             for _ in range(instruction):
@@ -93,6 +99,7 @@ def simulate(board_map, instructions):
                         else:
                             # move right
                             pos = next_pos
+                            assert board_map[pos[0]][pos[1]] != "#"
                             board_map[pos[0]][pos[1]] = ARROWS[direction]
                     else:
                         # Left
@@ -110,6 +117,7 @@ def simulate(board_map, instructions):
                         else:
                             # move left
                             pos = next_pos
+                            assert board_map[pos[0]][pos[1]] != "#"
                             board_map[pos[0]][pos[1]] = ARROWS[direction]
                 else:
                     # Up or Down
@@ -123,15 +131,15 @@ def simulate(board_map, instructions):
                     below = pos[0]
                     while True:
                         if (
-                            below + 1 >= len(board_map)
-                            or pos[1] >= len(board_map[below + 1])
-                            or board_map[below + 1][pos[1]] == " "
+                                below + 1 >= len(board_map)
+                                or pos[1] >= len(board_map[below + 1])
+                                or board_map[below + 1][pos[1]] == " "
                         ):
                             break
                         else:
                             below += 1
 
-                    column = [c[pos[1]] for c in board_map[above : below + 1]]
+                    column = [c[pos[1]] for c in board_map[above: below + 1]]
 
                     if column[0] == " " or column[-1] == " ":
                         print("error!")
@@ -156,6 +164,7 @@ def simulate(board_map, instructions):
                         else:
                             # move down
                             r_pos = next_r_pos
+                            assert board_map[pos[0]][pos[1]] != "#"
                             board_map[r_pos[0] + above][r_pos[1]] = ARROWS[direction]
 
                     else:
@@ -176,16 +185,15 @@ def simulate(board_map, instructions):
                         else:
                             # move up
                             r_pos = next_r_pos
+                            assert board_map[pos[0]][pos[1]] != "#"
                             board_map[r_pos[0] + above][r_pos[1]] = ARROWS[direction]
 
                     pos = r_pos[0] + above, r_pos[1]
 
     return pos, direction
 
-def make_seams():
-    pass
 
-def myrange(pointa,pointb):
+def myrange(pointa, pointb):
     # inclusive ranges in either direction
     if pointa[0] == pointb[0]:
         # horizontal
@@ -193,13 +201,21 @@ def myrange(pointa,pointb):
         y = pointb[1]
         a = pointa[0]
 
-        return [(a, j) for j in (range(x, y + 1) if y > x else range(x, y-1, -1))]
+        if not testing:
+            assert abs(y - x) == 49, f"{y=} {x=}"
+
+        return [(a, j) for j in (range(x, y + 1) if y > x else range(x, y - 1, -1))]
     else:
         # vertical
         x = pointa[0]
         y = pointb[0]
         a = pointa[1]
-        return [(j, a) for j in (range(x, y + 1) if y > x else range(x, y-1, -1))]
+
+        if not testing:
+            assert abs(y - x) == 49, f"{y=} {x=}"
+
+        return [(j, a) for j in (range(x, y + 1) if y > x else range(x, y - 1, -1))]
+
 
 def make_seam(first, second):
     inverse = {
@@ -221,169 +237,50 @@ def make_seam(first, second):
 
     return result
 
+
 def new_direction_pos(direction, pos):
     # change direction and y,x position
+
+    # hard coding the wrapping of the shapes is
+    # not pretty but perhaps quicker than coding a more elegant solution
+    # and, AFAIK, the input shape is the same for everyone
+    # (only the . and # locations change)
     if testing:
-        seams = {}
-        if direction == "R":
-            if 0 <= pos[0] <= 3:
-                direction = "L"
-                pos = 8 + 3 - pos[0], 15
-
-            elif 4 <= pos[0] <= 7:
-                direction = "D"
-                # pos = 8, pos[0]-7+12
-                # pos = 8, 16 - (8 - pos[0])
-                pos = 8, 15 - (pos[0]-4)
-
-            elif 8 <= pos[0] <= 11:
-                direction = "L"
-                pos = 3 - (pos[0] - 8), 11
-
-            else:
-                assert False, pos
-
-        elif direction == "L":
-            if 0 <= pos[0] <= 3:
-                direction = "D"
-                pos = 4, pos[0] + 4
-
-            elif 4 <= pos[0] <= 7:
-                direction = "U"
-                pos = 11, 12 + ( 8 - pos[0])
-
-            elif 8 <= pos[0] <= 11:
-                direction = "U"
-                pos = 7, 7 - (pos[0]-8)
-
-            else:
-                assert False, pos
-
-        elif direction == "U":
-            if 0 <= pos[1] <= 3:
-                direction = "D"
-                pos = 0, 11-pos[1]
-            elif 4 <= pos[1] <= 7:
-                direction = "R"
-                pos = pos[1]-4, 8
-            elif 8 <= pos[1] <= 11:
-                direction = "D"
-                pos = 4, 8 - (pos[1] - 8)
-            elif 12 <= pos[1] <= 15:
-                direction = "L"
-                pos = 11 - (pos[1] - 12), 11
-            else:
-                assert False, pos
-
-        else:
-            # Down
-            if 0 <= pos[1] <= 3:
-                direction = "U"
-                pos = 11, 11-pos[1]
-            elif 4 <= pos[1] <= 7:
-                direction = "R"
-                pos = 7, 11 - (pos[1]-4)
-            elif 8 <= pos[1] <= 11:
-                direction = "U"
-                pos = 7, 3-(pos[1]-8)
-            elif 12 <= pos[1] <= 15:
-                direction = "R"
-                pos = 4 + (pos[1]-12), 0
-            else:
-                assert False, pos
-
+        seams = {
+            **make_seam(((0, 8), (0, 11), "U"), ((4, 3), (4, 0), "D")),
+            **make_seam(((0, 8), (3, 8), "L"), ((4, 4), (4, 7), "D")),
+            **make_seam(((4, 0), (7, 0), "L"), ((11, 15), (11, 12), "U")),
+            **make_seam(((8, 15), (8, 12), "U"), ((4, 11), (7, 11), "L")),
+            **make_seam(((7, 4), (7, 7), "D"), ((8, 8), (11, 8), "R")),
+            **make_seam(((7, 0), (7, 3), "D"), ((11, 11), (11, 8), "U")),
+            **make_seam(((0, 11), (3, 11), "R"), ((11, 15), (8, 15), "L")),
+        }
     else:
-        # not testing
-        dim = 5
-        if direction == "R":
-            if 0 <= pos[0] <= dim-1:
-                direction = "L"
-                pos = (3*dim) - 1 - pos[0], (dim*2)-1
-            elif dim <= pos[0] <= (2*dim)-1:
-                direction = "U"
-                pos = dim-1, (2*dim) + (pos[0]-dim)
-            elif 2*dim <= pos[0] <= (3*dim)-1:
-                direction = "L"
-                pos = dim-(pos[0]-(2*dim))-1, (3*dim)-1
-            else:
-                # todo
-                direction = ""
-                pass
+        seams = {
+            # make_seams makes this a little less tedious than my previous strategy
+            **make_seam(((49, 100), (49, 149), "D"), ((50, 99), (99, 99), "L")),
+            **make_seam(((49, 149), (0, 149), "R"), ((100, 99), (149, 99), "L")),
+            **make_seam(((0, 100), (0, 149), "U"), ((199, 0), (199, 49), "U")),
+            **make_seam(((0, 50), (0, 99), "U"), ((150, 0), (199, 0), "R")),
+            **make_seam(((0, 50), (49, 50), "L"), ((149, 0), (100, 0), "R")),
+            **make_seam(((50, 50), (99, 50), "L"), ((100, 0), (100, 49), "D")),
+            **make_seam(((149, 50), (149, 99), "D"), ((150, 49), (199, 49), "L")),
+        }
 
-
-        elif direction == "L":
-            pass
-        elif direction == "D":
-            pass
-        else:
-            # Up
-            pass
-
-    return direction, pos
-
-def walk_edge(board_map, direction, pos):
-    pass
-
-def is_edge(board_map, pos):
-    if pos[0] == 0 or pos[0] == len(board_map) - 1:
-        return True
-    elif pos[1] == 0 or pos[1] == len(board_map[pos[0]]) - 1:
-        return True
-    else:
-        if " " in (board_map[pos[0]-1][pos[1]], board_map[pos[0]+1][pos[1]], board_map[pos[0]][pos[1]-1], board_map[pos[0]][pos[1]+1]):
-            return True
-        else:
-            return False
-
-def new_direction_pos_two(board_map, direction, pos):
-    # change direction and y,x position
-
-    r_direction = ROTATIONS[direction+"R"]
-    r_pos = pos
-    rotation = 90
-
-    for _ in range(DIM):
-        if r_direction == "L":
-            if r_pos[1]-1 >= 0 and board_map[r_pos[0]][r_pos[1]-1] in NOT_EMPTY:
-                # move forward
-                r_pos = r_pos[0], r_pos[1] - 1
-
-                if not is_edge(board_map, r_pos):
-                    # must be at an inner corner
-                    if False:
-                        pass
-
-
-
-            # elif new_l_pos[1] < 0 or board_map[new_l_pos[0]][new_l_pos[1]] == " ":
-            else:
-
-                # turn right
-                pass
-
-
-        elif r_direction == "R":
-            pass
-
-        elif r_direction == "U":
-            pass
-
-        else:
-            # Down
-            pass
-
-
-    return direction, pos
+    new_pos, new_direction = seams[(pos, direction)]
+    return new_direction, new_pos
 
 
 def simulate_two(board_map, instructions):
     pos = 0, board_map[0].index(".")  # y, x from top left
     direction = "R"
+    assert board_map[pos[0]][pos[1]] != "#"
     board_map[pos[0]][pos[1]] = ARROWS[direction]
 
     for i_inst, instruction in enumerate(instructions):
         if isinstance(instruction, str):
             direction = ROTATIONS[direction + instruction]
+            assert board_map[pos[0]][pos[1]] != "#"
             board_map[pos[0]][pos[1]] = ARROWS[direction]
         else:
             for _ in range(instruction):
@@ -400,6 +297,7 @@ def simulate_two(board_map, instructions):
                             else:
                                 pos = next_pos
                                 direction = next_direction
+                                assert board_map[pos[0]][pos[1]] != "#"
                                 board_map[pos[0]][pos[1]] = ARROWS[direction]
                         else:
                             x = pos[1] + 1
@@ -412,6 +310,7 @@ def simulate_two(board_map, instructions):
                             else:
                                 # move right
                                 pos = next_pos
+                                assert board_map[pos[0]][pos[1]] != "#"
                                 board_map[pos[0]][pos[1]] = ARROWS[direction]
                     else:
                         # Left
@@ -424,6 +323,7 @@ def simulate_two(board_map, instructions):
                             else:
                                 pos = next_pos
                                 direction = next_direction
+                                assert board_map[pos[0]][pos[1]] != "#"
                                 board_map[pos[0]][pos[1]] = ARROWS[direction]
                         else:
                             x = pos[1] - 1
@@ -436,12 +336,13 @@ def simulate_two(board_map, instructions):
                             else:
                                 # move left
                                 pos = next_pos
+                                assert board_map[pos[0]][pos[1]] != "#"
                                 board_map[pos[0]][pos[1]] = ARROWS[direction]
                 else:
                     # Up or Down
                     above = pos[0]
                     while True:
-                        if above - 1 < 0 or len(board_map[above-1]) < pos[1] or board_map[above - 1][pos[1]] == " ":
+                        if above - 1 < 0 or len(board_map[above - 1]) < pos[1] or board_map[above - 1][pos[1]] == " ":
                             break
                         else:
                             above -= 1
@@ -457,7 +358,7 @@ def simulate_two(board_map, instructions):
                         else:
                             below += 1
 
-                    column = [c[pos[1]] for c in board_map[above : below + 1]]
+                    column = [c[pos[1]] for c in board_map[above: below + 1]]
 
                     if column[0] == " " or column[-1] == " ":
                         print("error!")
@@ -474,6 +375,7 @@ def simulate_two(board_map, instructions):
                             else:
                                 pos = next_pos
                                 direction = next_direction
+                                assert board_map[pos[0]][pos[1]] != "#"
                                 board_map[pos[0]][pos[1]] = ARROWS[direction]
                         else:
                             y = r_pos[0] + 1
@@ -486,6 +388,7 @@ def simulate_two(board_map, instructions):
                             else:
                                 # move down
                                 r_pos = next_r_pos
+                                assert board_map[pos[0]][pos[1]] != "#"
                                 board_map[r_pos[0] + above][r_pos[1]] = ARROWS[direction]
 
                             pos = r_pos[0] + above, r_pos[1]
@@ -501,6 +404,7 @@ def simulate_two(board_map, instructions):
                             else:
                                 pos = next_pos
                                 direction = next_direction
+                                assert board_map[pos[0]][pos[1]] != "#"
                                 board_map[pos[0]][pos[1]] = ARROWS[direction]
                         else:
                             y = r_pos[0] - 1
@@ -513,27 +417,12 @@ def simulate_two(board_map, instructions):
                             else:
                                 # move up
                                 r_pos = next_r_pos
+                                assert board_map[pos[0]][pos[1]] != "#"
                                 board_map[r_pos[0] + above][r_pos[1]] = ARROWS[direction]
 
                             pos = r_pos[0] + above, r_pos[1]
 
     return pos, direction
-
-
-class Cube:
-    def __init__(self,
-                 front_face,
-                 left_face,
-                 right_face,
-                 back_face,
-                 top_face,
-                 bottom_face):
-        pass
-
-    def walk(self, instructions):
-        pass
-
-
 
 
 def two(content):

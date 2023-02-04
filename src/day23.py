@@ -1,38 +1,11 @@
 from typing import List
 
+
 class DoneException(Exception):
-    def __init__(self, loops):
+    def __init__(self, total):
         super().__init__()
-        self.loops = loops
+        self.loops = total
 
-class Elf:
-    def __init__(self, y, x, proposals):
-        self.y = y
-        self.x = x
-        self.next = "N"
-        self.proposals = proposals
-
-    def first_half(self):
-        pass
-
-    def second_half(self):
-        pass
-
-
-def display_elves(elves: List[Elf]) -> List[str]:
-    minx, miny, maxx, maxy = 10_000, 10_000, -10_000, -10_000
-    for elf in elves:
-        minx = min(minx, elf.x)
-        miny = min(miny, elf.y)
-        maxx = max(maxx, elf.x)
-        maxy = max(maxy, elf.y)
-
-    array = [["." for __ in range(maxx + 1 - minx)] for _ in range(maxy + 1 - miny)]
-
-    for elf in elves:
-        array[elf.y - miny][elf.x - minx] = "#"
-
-    return ["".join(x) for x in array]
 
 def display_grove(grove):
     for row in grove:
@@ -40,6 +13,7 @@ def display_grove(grove):
         for cell in row:
             s += str(cell if isinstance(cell, str) else "1")
         print(s)
+
 
 def double_grove(grove: List[List[str]]):
     half_y = len(grove) // 2
@@ -70,13 +44,27 @@ def double_grove(grove: List[List[str]]):
 
 def one(lines):
     grove = [[ch for ch in line] for line in lines]
+    try:
+        simulate(grove, raise_after=11)
+    except DoneException as e:
+        return e.loops
+
+
+def two(lines):
+    grove = [[ch for ch in line] for line in lines]
     return simulate(grove)
 
 
-def simulate(grove, raise_after=10):
+def simulate(grove, raise_after=None):
     dirs = [(-1, 0), (1, 0), (0, -1), (0, 1)]
     dirs_i = 0
-    for loop in range(10):
+    loop = -1
+    while True:
+        loop += 1
+        if loop == raise_after:
+            total = calc_score(grove)
+            raise DoneException(total)
+
         # First half
         for y in 1, len(grove) - 2:
             for cell in grove[y]:
@@ -128,7 +116,7 @@ def simulate(grove, raise_after=10):
                             and grove[left[0]][left[1]] != "#"
                             and grove[right[0]][right[1]] != "#"
                         ):
-                            grove[y_new][x_new] = (y,x)
+                            grove[y_new][x_new] = (y, x)
                             break
                         else:
                             if isinstance(grove[y_new][x_new], tuple):
@@ -144,7 +132,7 @@ def simulate(grove, raise_after=10):
                         dir = dirs[(dirs_i + i) % len(dirs)]
                         x_new = x + dir[1]
                         y_new = y + dir[0]
-                        if grove[y_new][x_new] == (y,x):
+                        if grove[y_new][x_new] == (y, x):
                             moves += 1
                             # So that we skip this elf in subsequent loops
                             grove[y_new][x_new] = "!"
@@ -152,7 +140,7 @@ def simulate(grove, raise_after=10):
                             break
 
         if moves == 0:
-            raise DoneException(loop)
+            break
 
         for y in range(len(grove)):
             for x in range(len(grove[0])):
@@ -163,9 +151,7 @@ def simulate(grove, raise_after=10):
 
         dirs_i += 1
 
-
-    total = calc_score(grove)
-    return total
+    return loop + 1
 
 
 def calc_score(grove):
@@ -206,11 +192,11 @@ def calc_score(grove):
     return total
 
 
-
 def main():
     with open("../inputs/day23.txt", encoding="utf-8") as f:
         lines = [line.rstrip() for line in f]
     print("one:", one(lines))
+    print("two:", two(lines))
 
 
 if __name__ == "__main__":
