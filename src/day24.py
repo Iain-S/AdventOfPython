@@ -102,10 +102,12 @@ class DoneException(Exception):
 
 
 def simulate(valley: List[List[str]], minutes: int) -> List[List[str]]:
-    tuple_valleys = []
+    # tuple_valleys = []
+    starting_points = {(-1,0)}
     for i in range(minutes):
         print(i)
-        tuple_valleys.append(tuple_valley(valley))
+        tv = tuple_valley(valley)
+        # tuple_valleys.append(tuple_valley(valley))
         # todo wait at (or return to) the start point
         # if is_path(tuple_valleys, 0, 0):
         #     raise DoneException(i)
@@ -113,69 +115,115 @@ def simulate(valley: List[List[str]], minutes: int) -> List[List[str]]:
 
         # The case where we wait at the start position for j moves
         # for j in range(len(tuple_valleys)):
-        tv = tuple(tuple_valleys)
+        # tv = tuple(tuple_valleys)
         # if is_path(tv[j:], -1, 0):
-        if is_path(tv, -1, 0):
-            raise DoneException(i)
-        valley = simulate_one_minutes(tuple_valleys[-1])
+        r = set()
+        for item in starting_points:
+            r.update(end_points(tv, item[0], item[1]))
+            if (len(tv)-1, len(tv[0])-1) in r:
+                raise DoneException(i)
+        starting_points = r
+
+        # result = is_path(tv, -1, 0):
+        # if is_path(tv, -1, 0):
+        valley = simulate_one_minutes(tv)
 
     return valley
 
+def simulate_two(valley: List[List[str]], minutes: int) -> List[List[str]]:
+    # tuple_valleys = []
+    starting_points = {(-1,0)}
+    for i in range(minutes):
+        print(i)
+        tv = tuple_valley(valley)
+        # tuple_valleys.append(tuple_valley(valley))
+        # todo wait at (or return to) the start point
+        # if is_path(tuple_valleys, 0, 0):
+        #     raise DoneException(i)
+        # else:
+
+        # The case where we wait at the start position for j moves
+        # for j in range(len(tuple_valleys)):
+        # tv = tuple(tuple_valleys)
+        # if is_path(tv[j:], -1, 0):
+        r = set()
+        for item in starting_points:
+            r.update(end_points(tv, item[0], item[1]))
+            if (len(tv)-1, len(tv[0])-1) in r:
+                raise DoneException(i)
+        starting_points = r
+
+        # result = is_path(tv, -1, 0):
+        # if is_path(tv, -1, 0):
+        valley = simulate_one_minutes(tv)
+
+    return valley
 
 @cache
-def is_path(valleys, start_y, start_x):
+def end_points(valley, start_y, start_x):
 
-    if not valleys:
-        return False
-
-    valley = valleys[0]
-
-    manhattan_distance = ((len(valley)-1) - start_y) + ((len(valley[0])-1) - start_x)
+    # a special case
+    if start_y == -1 and start_x == 0:
+        ep = {(-1, 0)}
+        if valley[0][0] == ".":
+            ep.add((0,1))
+        return ep
+        # return end_points(valley, -1, 0) or (valley[0][0] == "." and end_points(valley, 0, 0))
+    # manhattan_distance = ((len(valley)-1) - start_y) + ((len(valley[0])-1) - start_x)
     # If we are right above the exit, we can get there next move
     # Note that there are no vertical blizzards in the first or final columns
-    if manhattan_distance == 0:
-        return True
-    elif manhattan_distance > len(valleys):
-        return False
+    # if manhattan_distance == 0:
+    #     return {start_y, start_x}
+    # elif manhattan_distance > len(valleys):
+    #     return {}
 
     # if start_y == len(valley) - 1 and start_x == len(valley[0]) - 1:
     #     return True
 
+    ep = set()
     if start_y > 0 and valley[start_y - 1][start_x] == ".":
-        path_up = is_path(valleys[1:], start_y - 1, start_x)
-        if path_up:
-            return True
+        # path_up = end_points(valley, start_y - 1, start_x)
+        # if path_up:
+        #     return True
+        ep.add((start_y-1, start_x))
 
     # special case
     if start_y == 0 and start_x == 0:
-        path_from_entrance = is_path(valleys[1:], -1, 0)
-        if path_from_entrance:
-            return True
+        ep.add((-1, 0))
+        # path_from_entrance = end_points(valley, -1, 0)
+        # if path_from_entrance:
+        #     return True
 
-    # another special case
-    if start_y == -1 and start_x == 0:
-        return is_path(valleys[1:], -1, 0) or (valley[0][0] == "." and is_path(valleys[1:], 0, 0))
-
+    try:
+        valley[start_y + 1][start_x]
+    except IndexError as ie:
+        pass
     if start_y < len(valley) - 1 and valley[start_y + 1][start_x] == ".":
-        path_down = is_path(valleys[1:], start_y + 1, start_x)
-        if path_down:
-            return True
+        ep.add((start_y+1, start_x))
+        # path_down = end_points(valley, start_y + 1, start_x)
+        # if path_down:
+        #     return True
 
     if start_x > 0 and valley[start_y][start_x - 1] == ".":
-        path_left = is_path(valleys[1:], start_y, start_x - 1)
-        if path_left:
-            return True
+        ep.add((start_y, start_x-1))
+        # path_left = end_points(valley, start_y, start_x - 1)
+        # if path_left:
+        #     return True
 
     if start_x < len(valley[0]) - 1 and valley[start_y][start_x + 1] == ".":
-        path_right = is_path(valleys[1:], start_y, start_x + 1)
-        if path_right:
-            return True
+        ep.add((start_y, start_x+1))
+        # path_right = end_points(valley, start_y, start_x + 1)
+        # if path_right:
+        #     return True
 
     # Stay put
-    if is_path(valleys[1:], start_y, start_x) and valley[start_y][start_x] == ".":
-        return True
+    # if end_points(valley, start_y, start_x) and valley[start_y][start_x] == ".":
+    if valley[start_y][start_x] == ".":
+        ep.add((start_y, start_x))
+        # return True
 
-    return False
+    # return False
+    return ep
 
 
 def one(content):
@@ -185,8 +233,11 @@ def one(content):
         return e.mins
 
 
-def two(lines):
-    pass
+def two(content):
+    try:
+        simulate_two(string_to_valley(content), 1_000_000)
+    except DoneException as e:
+        return e.mins
 
 
 def main():

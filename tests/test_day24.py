@@ -6,7 +6,7 @@ from src.day24 import (
     string_to_valley,
     valley_to_string,
     in_bounds,
-    is_path, tuple_valley,
+    end_points, tuple_valley,
 )
 
 with open("../examples/day24.txt", encoding="utf-8") as f:
@@ -23,12 +23,12 @@ class TestOne(unittest.TestCase):
         valleys = [simulate(string_to_valley(content), i) for i in range(1, 19)]
         valleys = tuple(tuple_valley(valley) for valley in valleys)
 
-        self.assertTrue(is_path(valleys, -1, 0))
-        self.assertFalse(is_path(valleys[:-1], 0, 0))
-        self.assertTrue(is_path(valleys[4:], 0, 0))
+        self.assertTrue(end_points(valleys, -1, 0))
+        self.assertFalse(end_points(valleys[:-1], 0, 0))
+        self.assertTrue(end_points(valleys[4:], 0, 0))
 
         # not sure whether this should be true or not
-        self.assertTrue(is_path(valleys[8:], 0, 0))
+        self.assertTrue(end_points(valleys[8:], 0, 0))
 
     def test_simulate(self):
         valley = string_to_valley(
