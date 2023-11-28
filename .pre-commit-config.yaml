@@ -39,6 +39,6 @@ repos:
         language: system
         types: ['python']
         exclude: (?x)(
-          aopy/a|
+          aopy/|
           tests/a
           )
