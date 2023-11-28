@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "aopy"
+version = "0.1.0"
+description = ""
+authors = ["Iain-S <25081046+Iain-S@users.noreply.github.com >"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+tqdm = "^4.66.1"
+
+
+[tool.poetry.group.dev.dependencies]
+pyre-check = "^0.9.19"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
