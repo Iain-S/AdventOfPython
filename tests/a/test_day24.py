@@ -1,5 +1,5 @@
 import unittest
-from src.day24 import (
+from aopy.a.day24 import (
     one,
     two,
     simulate,

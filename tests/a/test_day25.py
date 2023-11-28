@@ -1,5 +1,5 @@
 import unittest
-from src.day25 import (
+from aopy.a.day25 import (
     one,
     two,
     snafu_to_dec,

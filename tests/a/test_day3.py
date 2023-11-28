@@ -1,5 +1,5 @@
 import unittest
-from src.day3 import one, score_item, two
+from aopy.a.day3 import one, score_item, two
 
 
 class TestOne(unittest.TestCase):

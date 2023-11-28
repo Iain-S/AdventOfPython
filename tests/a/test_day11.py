@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock, call
 
-from src.day11 import MonkeyOne, one, parse_monkey, two
+from aopy.a.day11 import MonkeyOne, one, parse_monkey, two
 
 NONE_FUNC = lambda x: None
 

@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 
-from src.day22 import one, two, parse_instructions, simulate_two, make_seam
+from aopy.a.day22 import one, two, parse_instructions, simulate_two, make_seam
 from src import day22
 
 with open("../examples/day22.txt", encoding="utf-8") as f:
@@ -20,7 +20,7 @@ class TestOne(unittest.TestCase):
         self.assertEqual(expected, actual)
 
     def test_one(self):
-        with patch("src.day22.simulate") as mock_simulate:
+        with patch("aopy.a.day22.simulate") as mock_simulate:
             mock_simulate.return_value = (1, 2), "U"
             actual = one(content)
             expected = (1000 * 2) + (4 * 3) + 3

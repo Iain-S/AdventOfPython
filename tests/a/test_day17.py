@@ -1,6 +1,6 @@
 import unittest
 
-from src.day17 import one, two, combine, repeat, RockFour, RockOne, RockThree, RockTwo, calc_highest_y, optimise, \
+from aopy.a.day17 import one, two, combine, repeat, RockFour, RockOne, RockThree, RockTwo, calc_highest_y, optimise, \
     find_cycle
 
 

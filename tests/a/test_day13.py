@@ -1,5 +1,5 @@
 import unittest
-from src.day13 import one, two, split_text, right_order
+from aopy.a.day13 import one, two, split_text, right_order
 
 
 class TestOne(unittest.TestCase):

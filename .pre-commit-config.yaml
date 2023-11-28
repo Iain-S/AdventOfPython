@@ -32,7 +32,4 @@ repos:
         entry: poetry run pyre check
         language: system
         types: ['python']
-        exclude: (?x)(
-          aopy/a|
-          tests/a
-          )
+        pass_filenames: false

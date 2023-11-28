@@ -1,5 +1,5 @@
 import unittest
-from src.day2 import one, ready_steady_go, two
+from aopy.a.day2 import one, ready_steady_go, two
 
 
 class TestOne(unittest.TestCase):

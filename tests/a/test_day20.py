@@ -1,5 +1,5 @@
 import unittest
-from src.day20 import one, two, move_right, calc_coords
+from aopy.a.day20 import one, two, move_right, calc_coords
 
 
 class TestOne(unittest.TestCase):

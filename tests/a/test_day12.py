@@ -1,5 +1,5 @@
 import unittest
-from src.day12 import (
+from aopy.a.day12 import (
     one,
     two,
     build_graph,

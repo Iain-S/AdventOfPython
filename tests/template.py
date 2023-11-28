@@ -1,9 +1,9 @@
 import unittest
-from src.dayTHE_DAY import one, two
+from aopy.u.template import one, two
 
 
 class TestOne(unittest.TestCase):
-    def test_example(self):
+    def test_example(self) -> None:
         with open("../examples/dayTHE_DAY.txt", encoding="utf-8") as f:
             content = [line.rstrip() for line in f]
 
@@ -13,7 +13,7 @@ class TestOne(unittest.TestCase):
 
 
 class TestTwo(unittest.TestCase):
-    def test_example(self):
+    def test_example(self) -> None:
         with open("../examples/dayTHE_DAY.txt", encoding="utf-8") as f:
             content = [line.rstrip() for line in f]
 

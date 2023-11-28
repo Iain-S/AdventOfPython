@@ -2,7 +2,7 @@ import unittest
 import networkx as nx
 from networkx.utils.misc import graphs_equal
 from matplotlib import pyplot as plt
-from src.day16 import one, two, build_graph, prune_graph, max_pressure, calls
+from aopy.a.day16 import one, two, build_graph, prune_graph, max_pressure, calls
 from src import day16
 
 

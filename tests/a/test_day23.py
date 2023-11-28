@@ -1,5 +1,5 @@
 import unittest
-from src.day23 import one, double_grove, calc_score, DoneException, two
+from aopy.a.day23 import one, double_grove, calc_score, DoneException, two
 
 
 class TestOne(unittest.TestCase):

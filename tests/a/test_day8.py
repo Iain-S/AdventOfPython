@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import MagicMock, call
-from src.day8 import one, two, from_below, from_left, from_right, from_above
+from aopy.a.day8 import one, two, from_below, from_left, from_right, from_above
 
 
 class TestOne(unittest.TestCase):

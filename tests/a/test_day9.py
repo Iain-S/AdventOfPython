@@ -1,5 +1,5 @@
 import unittest
-from src.day9 import one, two, rope
+from aopy.a.day9 import one, two, rope
 
 
 class TestOne(unittest.TestCase):

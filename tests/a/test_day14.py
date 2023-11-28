@@ -2,7 +2,7 @@ import unittest
 
 from numpy import array
 
-from src.day14 import one, two, build_cave
+from aopy.a.day14 import one, two, build_cave
 
 
 class TestOne(unittest.TestCase):

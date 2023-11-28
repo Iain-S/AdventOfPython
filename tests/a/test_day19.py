@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 
-from src.day19 import one, two, get_blueprint, run_one
+from aopy.a.day19 import one, two, get_blueprint, run_one
 
 with open("../examples/day19.txt", encoding="utf-8") as f:
     content = [line.rstrip() for line in f]
@@ -15,7 +15,7 @@ class TestOne(unittest.TestCase):
         self.assertEqual(expected, actual)
 
     def test_one(self):
-        with patch("src.day19.calc_most_geodes") as mock_geodes:
+        with patch("aopy.a.day19.calc_most_geodes") as mock_geodes:
             mock_geodes.side_effect = [9, 12]
 
             expected = 33

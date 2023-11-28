@@ -1,5 +1,5 @@
 import unittest
-from src.day15 import one, two, extract_diamonds, parse, slice_at, combine_ranges
+from aopy.a.day15 import one, two, extract_diamonds, parse, slice_at, combine_ranges
 
 
 class TestOne(unittest.TestCase):
