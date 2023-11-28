@@ -1,10 +1,10 @@
 import unittest
-from aopy.u.template import one, two
+from aopy.b.day1 import one, two
 
 
 class TestOne(unittest.TestCase):
     def test_example(self) -> None:
-        with open("../examples/dayTHE_DAY.txt", encoding="utf-8") as f:
+        with open("./examples/b/day1.txt", encoding="utf-8") as f:
             content = [line.rstrip() for line in f]
 
         expected = -1
@@ -14,10 +14,10 @@ class TestOne(unittest.TestCase):
 
 class TestTwo(unittest.TestCase):
     def test_example(self) -> None:
-        with open("../examples/dayTHE_DAY.txt", encoding="utf-8") as f:
+        with open("./examples/b/day1.txt", encoding="utf-8") as f:
             content = [line.rstrip() for line in f]
 
-        expected = -1
+        expected = -2
         actual = two(content)
         self.assertEqual(expected, actual)
 

@@ -5,11 +5,11 @@ set -o nounset
 
 DAY=$1
 
-cp "src/template.py" "src/day$DAY.py"
-sed -i "" "s/THE_DAY/$DAY/g" "src/day$DAY.py"
+cp "aopy/b/day0.py" "aopy/b/day$DAY.py"
+sed -i "" "s/0/$DAY/g" "aopy/b/day$DAY.py"
 
-cp "tests/template.py" "tests/test_day$DAY.py"
-sed -i "" "s/THE_DAY/$DAY/g" "tests/test_day$DAY.py"
+cp "tests/b/test_day0.py" "tests/b/test_day$DAY.py"
+sed -i "" "s/0/$DAY/g" "tests/b/test_day$DAY.py"
 
-touch "examples/day$DAY.txt"
-touch "inputs/day$DAY.txt"
+touch "examples/b/day$DAY.txt"
+touch "inputs/b/day$DAY.txt"

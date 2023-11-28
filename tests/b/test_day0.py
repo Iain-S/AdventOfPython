@@ -1,8 +1,27 @@
-from aopy.b.day0 import something
-from unittest import TestCase
+"""Tests for the day's solutions."""
+import unittest
+from aopy.b.day0 import one, two
 
 
-class TestModule(TestCase):
-    def test_something(self) -> None:
-        result = something()
-        self.assertEqual("1.0.0", result)
+class TestOne(unittest.TestCase):
+    def test_example(self) -> None:
+        with open("./examples/b/day0.txt", encoding="utf-8") as f:
+            content = [line.rstrip() for line in f]
+
+        expected = -1
+        actual = one(content)
+        self.assertEqual(expected, actual)
+
+
+class TestTwo(unittest.TestCase):
+    def test_example(self) -> None:
+        with open("./examples/b/day0.txt", encoding="utf-8") as f:
+            content = [line.rstrip() for line in f]
+
+        expected = -2
+        actual = two(content)
+        self.assertEqual(expected, actual)
+
+
+if __name__ == "__main__":
+    unittest.main()
