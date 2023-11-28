@@ -33,3 +33,12 @@ repos:
         language: system
         types: ['python']
         pass_filenames: false
+      - id: unittests
+        name: Unit Tests
+        entry: poetry run unittest
+        language: system
+        types: ['python']
+        exclude: (?x)(
+          aopy/a|
+          tests/a
+          )
