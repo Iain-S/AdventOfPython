@@ -1,5 +1,5 @@
 """Check that our setup works as intended."""
 
 
-def something() -> int:
-    return 1 + 0
+def something() -> str:
+    return "1.0.0"

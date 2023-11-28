@@ -35,7 +35,7 @@ repos:
         pass_filenames: false
       - id: unittests
         name: Unit Tests
-        entry: poetry run unittest
+        entry: poetry run python -m unittest
         language: system
         types: ['python']
         exclude: (?x)(
