@@ -1,3 +1,4 @@
+# Used for 2022 but not 2023+
 alabaster==0.7.12
 anyio==3.6.2
 app-model==0.1.1
