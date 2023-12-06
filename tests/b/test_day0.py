@@ -4,22 +4,24 @@ from aopy.b.day0 import one, two
 
 
 class TestOne(unittest.TestCase):
-    def test_example(self) -> None:
-        with open("./examples/b/day0.txt", encoding="utf-8") as f:
-            content = [line.rstrip() for line in f]
+    def setUp(self) -> None:
+        with open("./examples/b/day6.txt", encoding="utf-8") as f:
+            self.content = [line.rstrip() for line in f]
 
+    def test_example(self) -> None:
         expected = -1
-        actual = one(content)
+        actual = one(self.content)
         self.assertEqual(expected, actual)
 
 
 class TestTwo(unittest.TestCase):
-    def test_example(self) -> None:
-        with open("./examples/b/day0.txt", encoding="utf-8") as f:
-            content = [line.rstrip() for line in f]
+    def setUp(self) -> None:
+        with open("./examples/b/day6.txt", encoding="utf-8") as f:
+            self.content = [line.rstrip() for line in f]
 
+    def test_example(self) -> None:
         expected = -2
-        actual = two(content)
+        actual = two(self.content)
         self.assertEqual(expected, actual)
 
 

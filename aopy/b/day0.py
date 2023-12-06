@@ -17,6 +17,9 @@ def main() -> None:
     with open("./inputs/b/day0.txt", encoding="utf-8") as f:
         lines = [line.rstrip() for line in f]
     print("one:", one(lines))
+
+    with open("./inputs/b/day0.txt", encoding="utf-8") as f:
+        lines = [line.rstrip() for line in f]
     print("two:", two(lines))
 
 
