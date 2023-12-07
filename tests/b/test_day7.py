@@ -1,6 +1,6 @@
 """Tests for the day's solutions."""
 import unittest
-from aopy.b.day7 import one, two, parse, rank, comparator, rank_two
+from aopy.b.day7 import one, two, parse, rank, rank_two, comparator_two
 
 
 class TestOne(unittest.TestCase):
@@ -39,11 +39,6 @@ class TestOne(unittest.TestCase):
         )
         self.assertEqual(expected, actual)
 
-    def test_comparitor(self):
-        expected = 1
-        actual = comparator("32T3K", "T55J5")
-        self.assertEqual(expected, actual)
-
 
 class TestTwo(unittest.TestCase):
     def setUp(self) -> None:
@@ -72,6 +67,15 @@ class TestTwo(unittest.TestCase):
                 "QQQJA",
             ]
         )
+        self.assertEqual(expected, actual)
+
+        expected = ["JKKK2", "QQQQ2"]
+        actual = rank_two(["QQQQ2", "JKKK2"])
+        self.assertEqual(expected, actual)
+
+    def test_comparitor_two(self) -> None:
+        expected = -1
+        actual = comparator_two("JKKK2", "QQQQ2")
         self.assertEqual(expected, actual)
 
 

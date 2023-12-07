@@ -1,6 +1,7 @@
 """Solve the day's problem."""
 import functools
 from collections import Counter
+from typing import Callable
 
 the_map = {
     "A": 14,
@@ -24,25 +25,37 @@ def parse(lines: list[str]) -> tuple[list[str], list[int]]:
     return [x[0] for x in temp], [int(x[1]) for x in temp]
 
 
-def tie_break(left: str, right: str) -> str:
-    pass
-
-
 def comparator_two(left: str, right: str) -> int:
     l_counter = Counter(left)
     r_counter = Counter(right)
 
+    # always best to add joker to max value
     l_jokers = l_counter.pop("J", 0)
-    l_max = (max(l_counter.values()) if l_counter else 0) + l_jokers
+    l_max = max(l_counter.values()) if l_counter else 0
+    for k, v in l_counter.items():
+        if v == l_max:
+            l_counter[k] = l_max + l_jokers
+            break
+    l_max = l_max + l_jokers
 
     r_jokers = r_counter.pop("J", 0)
-    r_max = (max(r_counter.values()) if r_counter else 0) + r_jokers
+    r_max = max(r_counter.values()) if r_counter else 0
+    for k, v in r_counter.items():
+        if v == r_max:
+            r_counter[k] = r_max + r_jokers
+            break
+    r_max = r_max + r_jokers
 
     if l_max < r_max:
         return -1
     elif l_max > r_max:
         return 1
     else:
+        if l_max < r_max:
+            return -1
+        if l_max > r_max:
+            return 1
+
         # full house?
         if l_max == 3:
             l_min = min(l_counter.values())
@@ -154,7 +167,7 @@ def rank_two(hands: list[str]) -> list[str]:
     return sorted(hands, key=functools.cmp_to_key(comparator_two))
 
 
-def solve(lines: list[str], ranker) -> int:
+def solve(lines: list[str], ranker: Callable[[list[str]], list[str]]) -> int:
     hands, bids = parse(lines)
     ranked = ranker(hands)
     result = []
