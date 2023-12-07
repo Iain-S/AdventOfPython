@@ -5,7 +5,7 @@ from aopy.b.day0 import one, two
 
 class TestOne(unittest.TestCase):
     def setUp(self) -> None:
-        with open("./examples/b/day6.txt", encoding="utf-8") as f:
+        with open("./examples/b/day0.txt", encoding="utf-8") as f:
             self.content = [line.rstrip() for line in f]
 
     def test_example(self) -> None:
@@ -16,7 +16,7 @@ class TestOne(unittest.TestCase):
 
 class TestTwo(unittest.TestCase):
     def setUp(self) -> None:
-        with open("./examples/b/day6.txt", encoding="utf-8") as f:
+        with open("./examples/b/day0.txt", encoding="utf-8") as f:
             self.content = [line.rstrip() for line in f]
 
     def test_example(self) -> None:
