@@ -11,7 +11,7 @@ from aopy.b.day18 import (
     point_in_rect,
     split_rect,
     split_range,
-    calc_bounding_rect,
+    calc_bounding_rect, count_intersections,
 )
 
 
@@ -63,12 +63,12 @@ class TestTwo(unittest.TestCase):
         with open("../../examples/b/day18.txt", encoding="utf-8") as f:
             self.content = [line.rstrip() for line in f]
 
-        self.two_loop = [
+        self.two_loop = (
             ((0, 0), (2, 0)),
             ((2, 0), (2, 2)),
             ((2, 2), (0, 2)),
             ((0, 2), (0, 0)),
-        ]
+        )
 
     def test_example(self) -> None:
         expected = 952_408_144_115
@@ -85,7 +85,7 @@ class TestTwo(unittest.TestCase):
             ]
         )
         expected = self.two_loop
-        self.assertListEqual(expected, actual)
+        self.assertTupleEqual(expected, actual)
 
         actual = walk_loop(
             [
@@ -96,19 +96,20 @@ class TestTwo(unittest.TestCase):
                 ("R", 100),
             ]
         )
-        expected = [
+        expected = (
             ((0, 0), (0, -50)),
             ((0, -50), (0, -100)),
             ((0, -100), (-100, -100)),
             ((-100, -100), (-100, 0)),
             ((-100, 0), (0, 0)),
-        ]
-        self.assertListEqual(expected, actual)
+        )
+        self.assertTupleEqual(expected, actual)
 
     def test_get_area(self):
-        expected = 0
-        actual = get_area([], tuple())
+        expected = 4
+        actual = get_area(self.two_loop, ((0, 0), (2, 2)))
         self.assertEqual(expected, actual)
+        return
 
         loop = self.two_loop
         rect = ((0, 0), (1, 1))
@@ -199,6 +200,21 @@ class TestTwo(unittest.TestCase):
         expected = ((-1, -1), (3, 3))
         actual = calc_bounding_rect(self.two_loop)
         self.assertTupleEqual(expected, actual)
+
+    def test_count_intersections(self):
+        expected = 2
+        actual = count_intersections(
+            self.two_loop,
+            ((1, 3), (1, -3))
+        )
+        self.assertEqual(expected, actual)
+
+        expected = 1
+        actual = count_intersections(
+            self.two_loop,
+            ((1, 1), (1, -3))
+        )
+        self.assertEqual(expected, actual)
 
 
 if __name__ == "__main__":

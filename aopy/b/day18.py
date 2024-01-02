@@ -1,6 +1,6 @@
 """Solve the day's problem."""
 from operator import add, mul
-from functools import partial
+from functools import partial, lru_cache
 
 compass = {
     "U": (0, -1),
@@ -122,7 +122,7 @@ def main() -> None:
 tpoint = tuple[int, int]
 tpointpair = tuple[tpoint, tpoint]
 trect = tpointpair
-tloop = list[tpointpair]
+tloop = tuple[tpointpair]
 
 
 def walk_loop(directions: list[tuple[str, int]]) -> tloop:
@@ -137,9 +137,10 @@ def walk_loop(directions: list[tuple[str, int]]) -> tloop:
         result.append(((x, y), (newx, newy)))
         x, y = newx, newy
 
-    return result
+    return tuple(result)
 
 
+@lru_cache
 def calc_bounding_rect(loop: tloop) -> trect:
     """Get a rectangle that bounds the loop."""
     top_left = (min([x[0][0] for x in loop]) - 1, min([x[0][1] for x in loop]) - 1)
@@ -147,14 +148,31 @@ def calc_bounding_rect(loop: tloop) -> trect:
     return top_left, bottom_right
 
 
+def count_intersections(loop: tloop, vline: tpointpair) -> int:
+    """Count the number of times that the vertical line cuts the loop."""
+    assert vline[0][0] == vline[1][0]
+
+    intersections = 0
+    for starts_at, finishes_at in loop:
+        if (starts_at[1] == finishes_at[1]) and (starts_at[1] < vline[0][1]):
+            # horizontal line in the right y range
+            if (starts_at[0] < vline[0][0] < finishes_at[0]) or (finishes_at[0] < vline[0][0] < starts_at[0]):
+                intersections += 1
+
+    return intersections
+
+
 def rect_in_loop(loop: tloop, rect: trect) -> bool:
     """Is rect entirely within loop?"""
-    # We can assume that the loop and rectangle don't intersect.
+    # We can assume that the loop and rectangle don't intersect,
+    # so rect is either entirely within the loop or entirely outside the loop.
     bounding_rect = calc_bounding_rect(loop)
+
+    # A vertical line straight up from the top left corner of the rectangle.
     a_line = rect[0], (rect[0][0], bounding_rect[0][1])
 
     # If the new line intersects the loop, the rectangle is entirely within the loop.
-    return intersects(loop, a_line)
+    return count_intersections(loop, a_line) % 2 == 1
 
 
 def point_in_rect(point: tpoint, rect: trect) -> bool:
